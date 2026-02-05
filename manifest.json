@@ -1,0 +1,18 @@
+
+{
+  "name": "Meditin",
+  "short_name": "Meditin",
+  "description": "Elite Medical Test & Interview Preparation Platform",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#002147",
+  "theme_color": "#002147",
+  "icons": [
+    {
+      "src": "public/Logo.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

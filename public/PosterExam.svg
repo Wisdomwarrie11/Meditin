@@ -1,0 +1,11 @@
+
+<svg width="600" height="900" viewBox="0 0 600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="600" height="900" fill="white"/>
+  <path d="M0 0H600V450C600 450 450 600 300 600C150 600 0 450 0 450V0Z" fill="#002147"/>
+  <text x="300" y="150" text-anchor="middle" fill="white" font-family="Plus Jakarta Sans" font-weight="900" font-size="50">ACE YOUR</text>
+  <text x="300" y="240" text-anchor="middle" fill="#F97316" font-family="Plus Jakarta Sans" font-weight="900" font-size="90">BOARDS</text>
+  <rect x="150" y="650" width="300" height="80" rx="40" fill="#F97316"/>
+  <text x="300" y="700" text-anchor="middle" fill="white" font-family="Plus Jakarta Sans" font-weight="900" font-size="24">GET STARTED</text>
+  <path d="M100 800H500" stroke="#002147" stroke-width="4" stroke-dasharray="20 20"/>
+  <text x="300" y="850" text-anchor="middle" fill="#002147" font-family="Inter" font-weight="900" font-size="16">50,000+ HIGH FIDELITY QUESTIONS</text>
+</svg>

@@ -1,0 +1,8 @@
+
+<svg width="600" height="900" viewBox="0 0 600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="600" height="900" fill="#0F172A"/>
+  <path d="M300 100L550 300V600L300 800L50 600V300L300 100Z" stroke="#F97316" stroke-width="2"/>
+  <text x="300" y="400" text-anchor="middle" fill="white" font-family="Plus Jakarta Sans" font-weight="900" font-size="40">SCHOLARSHIP</text>
+  <text x="300" y="480" text-anchor="middle" fill="#F97316" font-family="Plus Jakarta Sans" font-weight="900" font-size="80">GATEWAY</text>
+  <text x="300" y="550" text-anchor="middle" fill="#94A3B8" font-family="Inter" font-weight="700" font-size="20">STUDY IN UK • US • GERMANY</text>
+</svg>

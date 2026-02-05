@@ -1,0 +1,8 @@
+{
+  "name": "Meditin - Medical Test & Interview Prep",
+  "description": "A comprehensive medical preparation platform for exams and mock interviews, featuring structured feedback, analytics, and secure Paystack integration.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
