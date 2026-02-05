@@ -190,7 +190,6 @@ const Home: React.FC = () => {
                     <p className="text-xl text-white font-medium leading-relaxed italic">"{t.text}"</p>
                   </div>
                   <div className="flex items-center gap-4 mt-12 pt-8 border-t border-white/10">
-                    <img src={t.img} alt={t.name} className="w-14 h-14 rounded-2xl object-cover grayscale group-hover:grayscale-0 transition-all" />
                     <div>
                       <p className="font-black text-white text-lg leading-none mb-1">{t.name}</p>
                       <p className="text-[10px] font-bold text-brandOrange uppercase tracking-widest">{t.role}</p>
@@ -232,7 +231,7 @@ const Home: React.FC = () => {
 
           <div className="relative h-[600px] rounded-[4rem] overflow-hidden group">
             <img 
-              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=1200" 
+              src="woman.jpeg" 
               alt="Confident Black Professional" 
               className="w-full h-full object-cover grayscale-[100%] group-hover:grayscale-0 transition-all duration-1000"
             />
