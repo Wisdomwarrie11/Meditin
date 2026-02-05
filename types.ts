@@ -58,6 +58,11 @@ export interface PracticeSession {
   strengths?: string;
   weaknesses?: string;
   goals?: string;
+  // New Enhanced Fields
+  applyingFor?: string;
+  experienceYears?: string;
+  skills?: string[];
+  qualification?: string;
   status: 'PENDING' | 'SCHEDULED' | 'COMPLETED' | 'CANCELLED';
   paid: boolean;
   createdAt: number;

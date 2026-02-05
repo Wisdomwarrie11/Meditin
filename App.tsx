@@ -39,7 +39,7 @@ const App: React.FC = () => {
                 <span className="text-2xl font-black tracking-tighter">Meditin</span>
               </div>
               <p className="text-slate-400 text-sm leading-relaxed">
-                Empowering the next generation of medical professionals through realistic simulations and expert feedback. Designed for global career success.
+                Empowering the next generation of professionals through realistic simulations and expert feedback. Designed for global career success.
               </p>
             </div>
             <div>
@@ -63,8 +63,8 @@ const App: React.FC = () => {
               <h4 className="font-black text-brandOrange uppercase tracking-widest text-xs mb-6">Contact</h4>
               <p className="text-slate-400 text-sm font-bold">
                 support@meditin.com<br />
-                +234 (0) 800 MED PREP<br />
-                Lagos, Nigeria
+                +2349029729621<br />
+                Delta, Nigeria
               </p>
             </div>
           </div>

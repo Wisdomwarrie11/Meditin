@@ -17,7 +17,13 @@ self.addEventListener('install', (event) => {
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
+      // Return cached asset or fetch from network
+      // Ensuring the root '/' is always handled properly
+      return response || fetch(event.request).catch(() => {
+        if (event.request.mode === 'navigate') {
+          return caches.match('/');
+        }
+      });
     })
   );
 });
