@@ -36,7 +36,7 @@ const Home: React.FC = () => {
           scrollRef.current.scrollBy({ left: 400, behavior: 'smooth' });
         }
       }
-    }, 4500);
+    }, 5500);
 
   }, []);
 
@@ -277,7 +277,7 @@ const Home: React.FC = () => {
                   <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                     <Users className="text-white" size={32} />
                   </div>
-                  <h4 className="text-4xl font-black mb-2">500+</h4>
+                  <h4 className="text-4xl font-black mb-2">100+</h4>
                   <p className="text-xs font-bold text-white/40 uppercase tracking-widest">Qualified Pros</p>
                </div>
             </div>

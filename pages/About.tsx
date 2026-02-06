@@ -80,7 +80,7 @@ const About: React.FC = () => {
              </div>
              <div className="absolute top-10 left-10 p-6 bg-white rounded-[2rem] shadow-2xl">
                 <p className="text-xs font-black text-slate-400 uppercase mb-2">Success Stories</p>
-                <p className="text-2xl font-black text-navy tracking-tighter leading-none">15k+ Winners</p>
+                <p className="text-2xl font-black text-navy tracking-tighter leading-none">1k+ Winners</p>
              </div>
           </div>
           <div className="order-1 lg:order-2 space-y-12">
@@ -112,11 +112,11 @@ const About: React.FC = () => {
                 <p className="text-sm font-black text-navy uppercase tracking-[0.4em]">Pass Rate</p>
             </div>
             <div className="text-center space-y-4">
-                <p className="text-8xl font-black text-navy tracking-tighter">15k+</p>
+                <p className="text-8xl font-black text-navy tracking-tighter">150+</p>
                 <p className="text-sm font-black text-brandOrange uppercase tracking-[0.4em]">Elite Alumni</p>
             </div>
             <div className="text-center space-y-4">
-                <p className="text-8xl font-black text-brandOrange tracking-tighter">40+</p>
+                <p className="text-8xl font-black text-brandOrange tracking-tighter">32+</p>
                 <p className="text-sm font-black text-navy uppercase tracking-[0.4em]">Career Paths</p>
             </div>
         </div>

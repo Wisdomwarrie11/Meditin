@@ -2,7 +2,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, ArrowRight, Loader2, Sparkles, ChevronLeft, AlertCircle } from 'lucide-react';
-import { registerUser, loginUser, onAuthStateChange } from '../services/authService';
+import { registerUser, loginUser } from '../services/authService';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../services/firebase';
 
 const Auth: React.FC = () => {
   const navigate = useNavigate();
@@ -17,22 +19,34 @@ const Auth: React.FC = () => {
     setError('');
     
     try {
+      let user;
       if (isLogin) {
-        await loginUser(formData.email, formData.password);
+        user = await loginUser(formData.email, formData.password);
       } else {
-        await registerUser(formData.email, formData.password, formData.name);
+        user = await registerUser(formData.email, formData.password, formData.name);
       }
       
-      // Verification of session before navigation
-      const unsubscribe = onAuthStateChange((user) => {
-        if (user) {
-          unsubscribe();
+      if (user) {
+        // Check if user has already completed their professional profile
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        const userData = userDoc.data();
+        
+        // If professionalField exists, they've done the profile step
+        if (userData && userData.professionalField) {
+          navigate('/dashboard');
+        } else {
           navigate('/book');
         }
-      });
+      }
     } catch (err: any) {
       console.error(err);
-      setError('Please check your credentials again.');
+      let message = 'An error occurred during authentication.';
+      if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+        message = 'Invalid email or password.';
+      } else if (err.code === 'auth/email-already-in-use') {
+        message = 'This email is already registered.';
+      }
+      setError(message);
       setIsLoading(false);
     }
   };
@@ -56,31 +70,31 @@ const Auth: React.FC = () => {
       </div>
 
       {/* Right: Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-20 relative">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-20 relative">
         <button 
           onClick={() => navigate('/')}
-          className="absolute top-10 left-10 p-4 text-slate-400 hover:text-navy transition-colors flex items-center gap-2 font-black uppercase text-xs tracking-widest"
+          className="absolute top-6 left-6 sm:top-10 sm:left-10 p-4 text-slate-400 hover:text-navy transition-colors flex items-center gap-2 font-black uppercase text-xs tracking-widest"
         >
           <ChevronLeft size={16} /> Home
         </button>
 
-        <div className="w-full max-w-md space-y-12 animate-in fade-in slide-in-from-right duration-700">
+        <div className="w-full max-w-md space-y-8 sm:space-y-12 animate-in fade-in slide-in-from-right duration-700">
           <div>
-            <h1 className="text-4xl font-black text-navy mb-4 tracking-tighter">
+            <h1 className="text-3xl sm:text-4xl font-black text-navy mb-2 sm:mb-4 tracking-tighter">
               {isLogin ? 'Welcome Back' : 'Get Started'}
             </h1>
-            <p className="text-slate-500 font-medium">
+            <p className="text-sm sm:text-base text-slate-500 font-medium leading-tight">
               {isLogin ? 'Login to access your dashboard and mocks.' : 'Create your account to start your professional journey.'}
             </p>
           </div>
 
           {error && (
-            <div className="p-4 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-3 text-red-600 text-sm font-bold animate-in shake">
-              <AlertCircle size={20} /> {error}
+            <div className="p-4 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-3 text-red-600 text-xs sm:text-sm font-bold animate-in shake">
+              <AlertCircle size={20} className="shrink-0" /> {error}
             </div>
           )}
 
-          <form onSubmit={handleAuth} className="space-y-6">
+          <form onSubmit={handleAuth} className="space-y-4 sm:space-y-6">
             {!isLogin && (
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
@@ -91,7 +105,7 @@ const Auth: React.FC = () => {
                     required
                     value={formData.name}
                     onChange={e => setFormData({...formData, name: e.target.value})}
-                    className="w-full bg-slate-50 border border-slate-100 rounded-[1.5rem] py-5 pl-14 pr-8 focus:bg-white focus:border-brandOrange outline-none transition-all font-bold text-navy"
+                    className="w-full bg-slate-50 border border-slate-100 rounded-[1.2rem] sm:rounded-[1.5rem] py-4 sm:py-5 pl-14 pr-8 focus:bg-white focus:border-brandOrange outline-none transition-all font-bold text-navy text-sm sm:text-base"
                     placeholder="Enter your name" 
                   />
                 </div>
@@ -106,7 +120,7 @@ const Auth: React.FC = () => {
                   required
                   value={formData.email}
                   onChange={e => setFormData({...formData, email: e.target.value})}
-                  className="w-full bg-slate-50 border border-slate-100 rounded-[1.5rem] py-5 pl-14 pr-8 focus:bg-white focus:border-brandOrange outline-none transition-all font-bold text-navy"
+                  className="w-full bg-slate-50 border border-slate-100 rounded-[1.2rem] sm:rounded-[1.5rem] py-4 sm:py-5 pl-14 pr-8 focus:bg-white focus:border-brandOrange outline-none transition-all font-bold text-navy text-sm sm:text-base"
                   placeholder="name@email.com" 
                 />
               </div>
@@ -120,7 +134,7 @@ const Auth: React.FC = () => {
                   required
                   value={formData.password}
                   onChange={e => setFormData({...formData, password: e.target.value})}
-                  className="w-full bg-slate-50 border border-slate-100 rounded-[1.5rem] py-5 pl-14 pr-8 focus:bg-white focus:border-brandOrange outline-none transition-all font-bold text-navy"
+                  className="w-full bg-slate-50 border border-slate-100 rounded-[1.2rem] sm:rounded-[1.5rem] py-4 sm:py-5 pl-14 pr-8 focus:bg-white focus:border-brandOrange outline-none transition-all font-bold text-navy text-sm sm:text-base"
                   placeholder="••••••••" 
                 />
               </div>
@@ -128,7 +142,7 @@ const Auth: React.FC = () => {
 
             <button 
               disabled={isLoading}
-              className="w-full py-6 bg-navy text-white rounded-full font-black text-xl hover:bg-brandOrange transition-all shadow-2xl shadow-navy/20 flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50"
+              className="w-full py-5 sm:py-6 bg-navy text-white rounded-full font-black text-lg sm:text-xl hover:bg-brandOrange transition-all shadow-2xl shadow-navy/20 flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50"
             >
               {isLoading ? <Loader2 className="animate-spin" /> : (isLogin ? 'Login' : 'Create Account')}
               <ArrowRight size={20} />
@@ -138,7 +152,7 @@ const Auth: React.FC = () => {
           <div className="text-center">
             <button 
               onClick={() => { setIsLogin(!isLogin); setError(''); }}
-              className="text-sm font-black text-slate-400 hover:text-navy uppercase tracking-widest transition-colors"
+              className="text-[10px] sm:text-sm font-black text-slate-400 hover:text-navy uppercase tracking-widest transition-colors"
             >
               {isLogin ? "Don't have an account? Sign Up" : "Already have an account? Login"}
             </button>

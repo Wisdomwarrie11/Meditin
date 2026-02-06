@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Smartphone, Download, X, Share, PlusSquare } from 'lucide-react';
+import { Smartphone, Download, X, Share, PlusSquare, ArrowUp, ChevronRight } from 'lucide-react';
 
 const InstallPWA: React.FC = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -22,14 +22,14 @@ const InstallPWA: React.FC = () => {
       e.preventDefault();
       setDeferredPrompt(e);
       // Show prompt after a small delay
-      setTimeout(() => setShowPrompt(true), 3000);
+      setTimeout(() => setShowPrompt(true), 5000);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
 
     // For iOS, we show the prompt if not in standalone
     if (isIOSDevice && !window.matchMedia('(display-mode: standalone)').matches) {
-      setTimeout(() => setShowPrompt(true), 3000);
+      setTimeout(() => setShowPrompt(true), 5000);
     }
 
     return () => {
@@ -50,55 +50,70 @@ const InstallPWA: React.FC = () => {
   if (!showPrompt) return null;
 
   return (
-    <div className="fixed bottom-6 left-6 right-6 z-[100] animate-in slide-in-from-bottom duration-500">
-      <div className="max-w-md mx-auto bg-navy/90 backdrop-blur-xl border border-white/10 rounded-[2rem] p-6 shadow-2xl flex items-center gap-5 relative overflow-hidden group">
-        <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none group-hover:scale-110 transition-transform">
-          <Smartphone size={100} />
-        </div>
-        
-        <div className="w-14 h-14 bg-brandOrange text-white rounded-2xl flex items-center justify-center shrink-0 shadow-lg">
-          <Download size={24} />
+    <div className="fixed bottom-6 left-4 right-4 sm:left-6 sm:right-auto sm:max-w-md z-[100] animate-in slide-in-from-bottom duration-700">
+      <div className="bg-navy/95 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-5 sm:p-6 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.5)] flex flex-col gap-5 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+          <Smartphone size={120} />
         </div>
 
-        <div className="flex-1">
-          <h4 className="text-white font-black text-sm uppercase tracking-widest mb-1">Install Meditin</h4>
-          <p className="text-slate-400 text-xs font-medium leading-tight">
-            {isIOS 
-              ? 'Add to home screen for a seamless mobile experience.'
-              : 'Get fast access to mocks & results directly from your home screen.'}
-          </p>
+        <button 
+          onClick={() => setShowPrompt(false)}
+          className="absolute top-4 right-4 p-1 text-white/30 hover:text-white transition-colors z-20"
+        >
+          <X size={20} />
+        </button>
+
+        <div className="flex items-center gap-5 relative z-10">
+          <div className="w-14 h-14 bg-brandOrange text-white rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-brandOrange/20">
+            <Download size={24} />
+          </div>
+          <div className="flex-1 pr-6">
+            <h4 className="text-white font-black text-sm uppercase tracking-widest mb-1">Add to Home Screen</h4>
+            <p className="text-slate-400 text-[10px] sm:text-xs font-medium leading-tight">
+              {isIOS 
+                ? 'Install Meditin for the best mobile experience and offline access.'
+                : 'Get fast access to mocks & results directly from your home screen.'}
+            </p>
+          </div>
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="relative z-10">
           {isIOS ? (
-            <div className="flex items-center gap-2">
-              <div className="p-2 bg-white/10 rounded-lg text-white animate-pulse">
-                <Share size={18} />
+            <div className="bg-white/5 rounded-2xl p-4 flex items-center justify-between border border-white/5">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-white/10 rounded-lg text-white">
+                  <Share size={18} />
+                </div>
+                <span className="text-[10px] font-black text-white/60 uppercase tracking-widest">Tap Share</span>
               </div>
-              <div className="p-2 bg-white/10 rounded-lg text-white">
-                <PlusSquare size={18} />
+              {/* Added missing ChevronRight import */}
+              <ChevronRight className="text-white/20" size={16} />
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-white/10 rounded-lg text-white">
+                  <PlusSquare size={18} />
+                </div>
+                <span className="text-[10px] font-black text-white/60 uppercase tracking-widest">Add to Home</span>
               </div>
             </div>
           ) : (
             <button 
               onClick={handleInstall}
-              className="px-5 py-2.5 bg-brandOrange text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-brandOrange/20"
+              className="w-full py-4 bg-brandOrange text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:scale-[1.02] transition-all shadow-xl shadow-brandOrange/20 active:scale-95"
             >
-              Install
+              Install Application
             </button>
           )}
-          <button 
-            onClick={() => setShowPrompt(false)}
-            className="p-1 text-white/30 hover:text-white transition-colors self-end"
-          >
-            <X size={16} />
-          </button>
         </div>
       </div>
       
       {isIOS && (
-        <div className="max-w-md mx-auto mt-2 text-center text-white/40 text-[10px] font-bold uppercase tracking-widest">
-          Tap <Share size={10} className="inline mx-1"/> then "Add to Home Screen"
+        <div className="mt-4 flex flex-col items-center gap-2 animate-bounce">
+          <div className="w-10 h-10 bg-brandOrange rounded-full flex items-center justify-center text-white shadow-xl">
+             <ArrowUp size={20} />
+          </div>
+          <p className="text-[8px] font-black text-navy/40 uppercase tracking-[0.2em] bg-white px-3 py-1 rounded-full border border-slate-100">
+             Menu is at the bottom center
+          </p>
         </div>
       )}
     </div>
