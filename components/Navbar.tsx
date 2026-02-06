@@ -37,11 +37,11 @@ const Navbar: React.FC = () => {
     <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${scrolled ? 'bg-navy shadow-2xl py-3' : 'bg-transparent py-6'}`}>
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3 group">
-          <img 
+          {/* <img 
             src="public/Logo.svg" 
             alt="Meditin Logo" 
             className="w-20 h-20 rounded-xl group-hover:rotate-6 transition-transform object-cover shadow-lg border border-white/10" 
-          />
+          /> */}
           <span className="text-2xl font-black tracking-tighter text-white">Meditin</span>
         </Link>
 
