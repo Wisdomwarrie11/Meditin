@@ -23,7 +23,7 @@ export const PRICING_PLANS: PricingPlan[] = [
   {
     id: 'standard_test',
     name: 'Career Test',
-    price: 7500,
+    price: 7300,
     type: PracticeType.EXAM,
     features: ['Industry Standard Test', 'AI Insight Report', 'Answer Explanations', 'Strength Mapping'],
     billingCycle: 'once'
@@ -31,7 +31,7 @@ export const PRICING_PLANS: PricingPlan[] = [
   {
     id: 'live_interview',
     name: 'Live Interview',
-    price: 15000,
+    price: 11000,
     type: PracticeType.INTERVIEW,
     features: ['45-Min Session', 'Real Industry Experts', 'Body Language Analysis', 'Follow-up Email'],
     billingCycle: 'once'

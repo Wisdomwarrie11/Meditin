@@ -1,25 +1,43 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   ArrowRight, 
-  CheckCircle, 
   Star, 
   Users, 
-  Zap, 
   Smile, 
-  MessageSquare, 
+  ArrowUpRight,
+  Clock,
+  ShieldCheck,
+  Brain,
   Trophy,
-  Play,
-  ArrowUpRight
+  MessageSquare,
+  Sparkles,
+  Code,
+  Briefcase,
+  Gavel
 } from 'lucide-react';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
-
+  const scrollRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     setIsVisible(true);
+
+    const interval = setInterval(() => {
+      if (scrollRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+        // If we are near the end, snap back to start
+        if (scrollLeft + clientWidth >= scrollWidth - 20) {
+          scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          // Move forward by one card width roughly
+          scrollRef.current.scrollBy({ left: 400, behavior: 'smooth' });
+        }
+      }
+    }, 4500);
+
   }, []);
 
   const testimonials = [
@@ -43,6 +61,44 @@ const Home: React.FC = () => {
     }
   ];
 
+  const expertTips = [
+    { 
+      title: 'The Power Pause', 
+      desc: 'During interviews, wait 2 seconds before answering. It shows you are thinking deeply and composed.', 
+      icon: <Clock />, 
+      cat: 'Interviews' 
+    },
+    { 
+      title: 'Patient Safety First', 
+      desc: 'In clinical exams, always state patient safety measures before diagnosis. It is the number one grading point.', 
+      icon: <ShieldCheck />, 
+      cat: 'Medical' 
+    },
+    { 
+      title: 'The "Why" Logic', 
+      desc: 'When explaining code or architecture, focus on the "Why" rather than the "How". Logic beats syntax.', 
+      icon: <Code />, 
+      cat: 'Technology' 
+    },
+    { 
+      title: 'IRAC Precision', 
+      desc: 'In law tests, follow Issue, Rule, Application, Conclusion. Precision is more valued than length.', 
+      icon: <Gavel />, 
+      cat: 'Legal' 
+    },
+    { 
+      title: 'Value Framing', 
+      desc: 'For business roles, link every answer to ROI or company goals. Show them the money.', 
+      icon: <Briefcase />, 
+      cat: 'Finance' 
+    },
+    { 
+      title: 'Camera Connection', 
+      desc: 'In virtual mocks, look directly at the lens, not the screen image. It mimics real eye contact.', 
+      icon: <Users />, 
+      cat: 'Soft Skills' 
+    }
+  ];
   return (
     <div className="bg-[#FCFCFD] selection:bg-brandOrange selection:text-white overflow-x-hidden">
       {/* Dynamic Hero Section */}
@@ -54,10 +110,6 @@ const Home: React.FC = () => {
         <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Text Side */}
           <div className={`lg:col-span-7 space-y-10 transition-all duration-1000 transform ${isVisible ? 'translate-x-0 opacity-100' : '-translate-x-10 opacity-0'}`}>
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-100 rounded-2xl shadow-sm">
-              <span className="flex h-2 w-2 rounded-full bg-brandOrange animate-pulse" />
-              <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Live Support Active</span>
-            </div>
             
             <h1 className="text-6xl md:text-8xl font-black text-navy leading-[0.85] tracking-tighter">
               Win your <br />
@@ -165,6 +217,8 @@ const Home: React.FC = () => {
         </div>
       </section>
 
+      
+
       {/* Featured Testimonials */}
       <section className="py-32 px-6 bg-navy relative overflow-hidden">
         {/* Animated Background Text */}
@@ -245,6 +299,47 @@ const Home: React.FC = () => {
           </div>
         </div>
       </section>
+
+         {/* Expert Tips Section (Auto-Scrolling Carousel) */}
+     <section className="py-32 px-6 bg-white border-y border-slate-100">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 px-4">
+            <div>
+              <h2 className="text-brandOrange font-black uppercase tracking-[0.4em] text-[10px] mb-4">Professional Intelligence</h2>
+              <p className="text-5xl font-black text-navy tracking-tighter leading-none">The Win Guide.</p>
+            </div>
+            <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.2em] mb-2 hidden md:block italic">Expert insights across industries</p>
+          </div>
+          
+          <div 
+            ref={scrollRef}
+            className="flex gap-8 overflow-x-auto pb-12 snap-x hide-scrollbar"
+            style={{ scrollBehavior: 'smooth' }}
+          >
+            {expertTips.map((tip, i) => (
+              <div key={i} className="min-w-[320px] md:min-w-[420px] snap-center">
+                <div className="bg-slate-50 p-12 rounded-[3.5rem] border border-slate-100 hover:border-brandOrange transition-all hover:shadow-2xl hover:shadow-brandOrange/10 group h-full flex flex-col justify-between">
+                  <div className="space-y-10">
+                    <div className="flex items-center justify-between">
+                      <div className="w-16 h-16 bg-navy text-white rounded-[1.5rem] flex items-center justify-center group-hover:bg-brandOrange transition-colors shadow-xl">
+                        {React.cloneElement(tip.icon as React.ReactElement<any>, { size: 32 })}
+                      </div>
+                      <span className="px-4 py-1.5 bg-white text-[10px] font-black uppercase tracking-widest text-slate-400 rounded-full border border-slate-200 group-hover:bg-brandOrange/10 group-hover:text-brandOrange transition-colors">
+                        {tip.cat}
+                      </span>
+                    </div>
+                    <h3 className="text-3xl font-black text-navy leading-tight">{tip.title}</h3>
+                  </div>
+                  <p className="text-slate-500 text-lg font-medium leading-relaxed mt-10">
+                    {tip.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
 
       {/* Unique Final CTA */}
       <section className="py-32 px-6">

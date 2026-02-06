@@ -9,6 +9,11 @@ import Success from './pages/Success';
 import Contact from './pages/Contact';
 import BrandAssets from './pages/BrandAssets';
 import Gallery from './pages/Gallery';
+import Dashboard from './pages/Dashboard';
+import Auth from './pages/Auth';
+import Payment from './pages/Payment';
+import PracticeSelector from './pages/PracticeSelector';
+import ExamEngine from './pages/ExamEngine';
 import InstallPWA from './components/InstallPWA';
 
 const App: React.FC = () => {
@@ -20,7 +25,12 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
+            <Route path="/auth" element={<Auth />} />
             <Route path="/book" element={<Booking />} />
+            <Route path="/payment/:sessionId" element={<Payment />} />
+            <Route path="/practice" element={<PracticeSelector />} />
+            <Route path="/exam-engine" element={<ExamEngine />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/success" element={<Success />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/brand-assets" element={<BrandAssets />} />
@@ -35,7 +45,7 @@ const App: React.FC = () => {
           <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-16">
             <div className="space-y-6">
               <div className="flex items-center gap-3">
-                <span className="p-2 bg-brandOrange text-white rounded-xl font-bold text-xl">MT</span>
+                <img src="public/Logo.svg" alt="Meditin" className="w-10 h-10 rounded-xl" />
                 <span className="text-2xl font-black tracking-tighter">Meditin</span>
               </div>
               <p className="text-slate-400 text-sm leading-relaxed">

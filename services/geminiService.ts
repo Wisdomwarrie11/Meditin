@@ -1,14 +1,14 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
 export async function generateMedicalFeedback(
   practiceType: string,
   field: string,
   userPerformance: string
 ) {
   try {
+    // Always initialize GoogleGenAI with a fresh instance to ensure correct API key selection
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: `Evaluate this medical ${practiceType} performance for a student in ${field}. 
@@ -24,12 +24,14 @@ export async function generateMedicalFeedback(
             weaknesses: { type: Type.ARRAY, items: { type: Type.STRING } },
             recommendations: { type: Type.STRING },
           },
-          required: ["score", "strengths", "weaknesses", "recommendations"]
+          propertyOrdering: ["score", "strengths", "weaknesses", "recommendations"]
         }
       }
     });
 
-    return JSON.parse(response.text);
+    // Use .text property directly as per latest SDK guidelines
+    const feedbackText = response.text?.trim() || "{}";
+    return JSON.parse(feedbackText);
   } catch (error) {
     console.error("Gemini Feedback Error:", error);
     return null;

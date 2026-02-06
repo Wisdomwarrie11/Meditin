@@ -1,32 +1,97 @@
 
-/**
- * In a production environment, you would initialize Firebase here.
- * For this implementation, we simulate the storage logic.
- */
-
-import { PracticeSession } from '../types';
+import { 
+  collection, 
+  addDoc, 
+  updateDoc, 
+  doc, 
+  query, 
+  where, 
+  getDocs,
+  serverTimestamp,
+  setDoc,
+  getDoc,
+  orderBy,
+  limit
+} from 'firebase/firestore';
+import { db } from './firebase';
+import { PracticeSession, UserProfile, PerformanceScore } from '../types';
 
 export const saveBooking = async (sessionData: PracticeSession): Promise<string> => {
-  console.log('Meditin Engine: Saving session to Firestore...', sessionData);
-  
-  // Simulated delay for network
-  await new Promise(resolve => setTimeout(resolve, 800));
-  
-  // In real implementation:
-  // const docRef = await addDoc(collection(db, "bookings"), sessionData);
-  // return docRef.id;
-
-  const mockId = `MTN-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
-  
-  // Store in localStorage as a fallback for demonstration
-  const existing = JSON.parse(localStorage.getItem('meditin_bookings') || '[]');
-  existing.push({ ...sessionData, id: mockId });
-  localStorage.setItem('meditin_bookings', JSON.stringify(existing));
-  
-  return mockId;
+  try {
+    const docRef = await addDoc(collection(db, "practiceSessions"), {
+      ...sessionData,
+      createdAt: serverTimestamp(),
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error("Error saving booking:", error);
+    throw error;
+  }
 };
 
-export const getMyBookings = async (email: string): Promise<PracticeSession[]> => {
-  const all = JSON.parse(localStorage.getItem('meditin_bookings') || '[]');
-  return all.filter((b: any) => b.email === email);
+export const updateBookingStatus = async (sessionId: string, updates: Partial<PracticeSession>) => {
+  try {
+    const docRef = doc(db, "practiceSessions", sessionId);
+    await updateDoc(docRef, updates);
+  } catch (error) {
+    console.error("Error updating booking:", error);
+    throw error;
+  }
+};
+
+export const logPerformanceScore = async (scoreData: PerformanceScore) => {
+  try {
+    await addDoc(collection(db, "performanceScores"), {
+      ...scoreData,
+      date: serverTimestamp()
+    });
+  } catch (error) {
+    console.error("Error logging score:", error);
+    throw error;
+  }
+};
+
+export const getPerformanceScores = async (userId: string): Promise<PerformanceScore[]> => {
+  try {
+    const q = query(
+      collection(db, "performanceScores"), 
+      where("userId", "==", userId),
+      orderBy("date", "asc")
+    );
+    const snap = await getDocs(q);
+    return snap.docs.map(d => ({ id: d.id, ...d.data() } as any));
+  } catch (error) {
+    console.error("Error fetching scores:", error);
+    return [];
+  }
+};
+
+export const updateUserProfile = async (uid: string, profileData: Partial<UserProfile>) => {
+  try {
+    const userRef = doc(db, 'users', uid);
+    const userSnap = await getDoc(userRef);
+    if (userSnap.exists()) {
+      await updateDoc(userRef, { ...profileData, updatedAt: serverTimestamp() });
+    } else {
+      await setDoc(userRef, { ...profileData, uid, createdAt: serverTimestamp(), role: 'STUDENT' });
+    }
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    throw error;
+  }
+};
+
+export const getMyBookings = async (userId: string): Promise<PracticeSession[]> => {
+  try {
+    const q = query(
+      collection(db, "practiceSessions"), 
+      where("userId", "==", userId),
+      orderBy("createdAt", "desc")
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as PracticeSession));
+  } catch (error) {
+    console.error("Error fetching bookings:", error);
+    return [];
+  }
 };

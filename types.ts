@@ -11,10 +11,13 @@ export enum PracticeType {
   SUBSCRIPTION = 'SUBSCRIPTION'
 }
 
-export enum PaymentStatus {
-  PENDING = 'PENDING',
-  SUCCESS = 'SUCCESS',
-  FAILED = 'FAILED'
+export interface PerformanceScore {
+  id?: string;
+  userId: string;
+  title: string;
+  score: number;
+  date: number;
+  category: string;
 }
 
 export interface UserProfile {
@@ -23,6 +26,10 @@ export interface UserProfile {
   displayName: string;
   role: UserRole;
   professionalField?: string;
+  institution?: string;
+  experienceYears?: string;
+  skills?: string[];
+  qualification?: string;
   createdAt: number;
 }
 
@@ -43,6 +50,7 @@ export interface PricingPlan {
 
 export interface PracticeSession {
   id?: string;
+  userId: string;
   fullName: string;
   email: string;
   institution: string;
@@ -52,31 +60,21 @@ export interface PracticeSession {
   practiceCategory: string;
   date: string;
   time: string;
-  planId: string;
-  // Professional Profile
+  planId?: string;
   bio?: string;
   strengths?: string;
   weaknesses?: string;
   goals?: string;
-  // New Enhanced Fields
   applyingFor?: string;
   experienceYears?: string;
   skills?: string[];
   qualification?: string;
-  status: 'PENDING' | 'SCHEDULED' | 'COMPLETED' | 'CANCELLED';
+  status: 'PENDING_PAYMENT' | 'SCHEDULED' | 'COMPLETED' | 'CANCELLED';
   paid: boolean;
   createdAt: number;
 }
 
-export interface Feedback {
-  score: number;
-  totalPossible: number;
-  strengths: string[];
-  weaknesses: string[];
-  recommendations: string;
-  recordedAt: number;
-}
-
+// Added Question interface to support SAMPLE_QUESTIONS in constants.tsx
 export interface Question {
   id: string;
   text: string;
