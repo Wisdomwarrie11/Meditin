@@ -25,6 +25,7 @@ export interface UserProfile {
   email: string;
   displayName: string;
   role: UserRole;
+  professionalSector?: string;
   professionalField?: string;
   institution?: string;
   experienceYears?: string;
@@ -54,17 +55,14 @@ export interface PracticeSession {
   fullName: string;
   email: string;
   institution: string;
+  sector: string;
   field: string;
-  customField?: string;
   natureOfPractice: string;
   practiceCategory: string;
   date: string;
   time: string;
   planId?: string;
-  bio?: string;
-  strengths?: string;
-  weaknesses?: string;
-  goals?: string;
+  genderPreference?: 'No Preference' | 'Male' | 'Female';
   applyingFor?: string;
   experienceYears?: string;
   skills?: string[];
@@ -74,7 +72,6 @@ export interface PracticeSession {
   createdAt: number;
 }
 
-// Added Question interface to support SAMPLE_QUESTIONS in constants.tsx
 export interface Question {
   id: string;
   text: string;

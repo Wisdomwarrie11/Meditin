@@ -1,47 +1,64 @@
 
 import { CareerField, PricingPlan, PracticeType, Question } from './types';
 
+export const SECTOR_MAPPING: Record<string, string[]> = {
+  'Health': ['Medical Doctor', 'Nurse', 'Radiographer', 'Lab Scientist', 'Pharmacist', 'Other / Specify'],
+  'Finance': ['Accountant', 'Financial Analyst', 'Investment Banker', 'Auditor', 'Other / Specify'],
+  'Sales': ['Sales Representative', 'Account Manager', 'Business Development', 'Sales Director', 'Other / Specify'],
+  'Education': ['Primary Teacher', 'Secondary Teacher', 'University Lecturer', 'Researcher', 'Other / Specify'],
+};
+
+export const SECTORS = Object.keys(SECTOR_MAPPING);
+
+export const MEDICAL_FIELDS: CareerField[] = [
+  { id: 'med', name: 'General Medicine', description: 'General clinical practice, diagnosis and treatment.' },
+  { id: 'nur', name: 'Nursing & Care', description: 'Patient management and nursing excellence.' },
+  { id: 'rad', name: 'Radiography', description: 'Medical imaging and radiation science.' },
+  { id: 'pha', name: 'Pharmacy', description: 'Pharmaceutical sciences and drug therapy.' },
+  { id: 'lab', name: 'Medical Lab', description: 'Laboratory diagnostics and research.' },
+];
+
 export const CAREER_FIELDS: CareerField[] = [
   { id: 'tech', name: 'Technology & Engineering', description: 'Software, Data, Product, and Hardware roles.' },
   { id: 'med', name: 'Healthcare & Nursing', description: 'Doctors, Nurses, and Medical Specialists.' },
   { id: 'fin', name: 'Finance & Consulting', description: 'Banking, Audit, Strategy, and Investment.' },
   { id: 'law', name: 'Law & Corporate Legal', description: 'Corporate, Criminal, and Legal Excellence.' },
   { id: 'edu', name: 'Education & Research', description: 'Teaching, Lecturing, and Global Research.' },
-  { id: 'other', name: 'Other Professional Fields', description: 'Specialized niche career paths.' },
-];
-
-// Added MEDICAL_FIELDS to fix the missing export error in PracticeSelector.tsx
-export const MEDICAL_FIELDS: CareerField[] = [
-  { id: 'med', name: 'General Medicine', description: 'Clinical practice and internal medicine.' },
-  { id: 'nur', name: 'Nursing & Care', description: 'Patient care, ethics, and clinical procedures.' },
-  { id: 'rad', name: 'Radiography', description: 'Diagnostic imaging and radiation safety.' },
-  { id: 'pha', name: 'Pharmacy', description: 'Pharmacology and clinical therapeutics.' },
-  { id: 'lab', name: 'Medical Lab Science', description: 'Diagnostic testing and laboratory analysis.' },
 ];
 
 export const PRICING_PLANS: PricingPlan[] = [
+  // Interview Plans
   {
-    id: 'standard_test',
-    name: 'Career Test',
-    price: 7300,
-    type: PracticeType.EXAM,
-    features: ['Industry Standard Test', 'AI Insight Report', 'Answer Explanations', 'Strength Mapping'],
-    billingCycle: 'once'
-  },
-  {
-    id: 'live_interview',
-    name: 'Live Interview',
-    price: 11000,
+    id: 'int_one_off',
+    name: 'Interview One-Off',
+    price: 4000,
     type: PracticeType.INTERVIEW,
-    features: ['45-Min Session', 'Real Industry Experts', 'Body Language Analysis', 'Follow-up Email'],
+    features: ['30-Min Session', 'Panel of Professionals', 'Strengths & Weaknesses Feedback', 'Career Guidance'],
     billingCycle: 'once'
   },
   {
-    id: 'monthly_mastery',
-    name: 'Monthly Mastery',
-    price: 45000,
-    type: PracticeType.SUBSCRIPTION,
-    features: ['4 Live Interviews', '1 Session Per Week', '24/7 Priority Support', 'Dedicated Career Coach'],
+    id: 'int_monthly',
+    name: 'Interview Monthly Master',
+    price: 14500,
+    type: PracticeType.INTERVIEW,
+    features: ['4 Sessions (1 per week)', '30-Min per Session', 'Deep Feedback Analytics', 'Priority Scheduling'],
+    billingCycle: 'monthly'
+  },
+  // Exam/Test Plans
+  {
+    id: 'exam_one_off',
+    name: 'Exam/Test One-Off',
+    price: 3000,
+    type: PracticeType.EXAM,
+    features: ['1 Practice Session', 'Max 3 Courses/Subjects', 'Detailed Answer Explanations', 'Performance Scoring'],
+    billingCycle: 'once'
+  },
+  {
+    id: 'exam_monthly',
+    name: 'Exam/Test Monthly Master',
+    price: 10700,
+    type: PracticeType.EXAM,
+    features: ['4 Sessions per week', 'Max 3 Courses per session', 'Unlimited Explanation Access', 'Progress Tracking'],
     billingCycle: 'monthly'
   },
 ];
@@ -49,8 +66,8 @@ export const PRICING_PLANS: PricingPlan[] = [
 export const NAV_LINKS = [
   { name: 'Dashboard', path: '/dashboard' },
   { name: 'Practice', path: '/practice' },
-  { name: 'History', path: '/history' },
-  { name: 'Profile', path: '/profile' },
+  { name: 'History', path: '/dashboard' },
+  { name: 'Profile', path: '/dashboard' },
 ];
 
 export const SAMPLE_QUESTIONS: Question[] = [
