@@ -95,3 +95,17 @@ export const getMyBookings = async (userId: string): Promise<PracticeSession[]> 
     return [];
   }
 };
+
+export const getAllBookings = async (): Promise<PracticeSession[]> => {
+  try {
+    const q = query(
+      collection(db, "practiceSessions"), 
+      orderBy("createdAt", "desc")
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as PracticeSession));
+  } catch (error) {
+    console.error("Error fetching all bookings:", error);
+    return [];
+  }
+};

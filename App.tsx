@@ -15,6 +15,7 @@ import Payment from './pages/Payment';
 import PracticeSelector from './pages/PracticeSelector';
 import ExamEngine from './pages/ExamEngine';
 import InstallPWA from './components/InstallPWA';
+import AdminBookings from './pages/AdminBookings';
 
 const App: React.FC = () => {
   return (
@@ -35,6 +36,7 @@ const App: React.FC = () => {
             <Route path="/contact" element={<Contact />} />
             <Route path="/brand-assets" element={<BrandAssets />} />
             <Route path="/gallery" element={<Gallery />} />
+            <Route path="/admin" element={<AdminBookings />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
