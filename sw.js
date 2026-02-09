@@ -1,8 +1,9 @@
 
-const CACHE_NAME = 'medpraktiz-v1';
+const CACHE_NAME = 'meditin-v1.1';
 const ASSETS = [
   '/',
   '/index.html',
+  '/manifest.json',
   '/public/Logo.svg'
 ];
 
@@ -17,8 +18,6 @@ self.addEventListener('install', (event) => {
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((response) => {
-      // Return cached asset or fetch from network
-      // Ensuring the root '/' is always handled properly
       return response || fetch(event.request).catch(() => {
         if (event.request.mode === 'navigate') {
           return caches.match('/');

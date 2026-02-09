@@ -14,7 +14,9 @@ import {
   Briefcase,
   Calendar,
   Loader2,
-  Table as TableIcon
+  Table as TableIcon,
+  HelpCircle,
+  Shield
 } from 'lucide-react';
 
 const AdminBookings: React.FC = () => {
@@ -32,7 +34,7 @@ const AdminBookings: React.FC = () => {
   }, []);
 
   const downloadCSV = () => {
-    const headers = ['FullName', 'Email', 'Institution', 'Sector', 'Field', 'Nature', 'Date', 'Time', 'Paid'];
+    const headers = ['FullName', 'Email', 'Institution', 'Sector', 'Field', 'Nature', 'QType', 'Standard', 'Date', 'Time', 'Paid'];
     const rows = filteredBookings.map(b => [
       b.fullName,
       b.email,
@@ -40,6 +42,8 @@ const AdminBookings: React.FC = () => {
       b.sector,
       b.field,
       b.natureOfPractice,
+      b.questionType || 'N/A',
+      b.examStandard || 'N/A',
       b.date,
       b.time,
       b.paid ? 'YES' : 'NO'
@@ -72,7 +76,7 @@ const AdminBookings: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 p-6 sm:p-12">
-      <div className="max-w-[1600px] mx-auto space-y-8">
+      <div className="max-w-[1700px] mx-auto space-y-8">
         {/* Header Area */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="flex items-center gap-4">
@@ -89,7 +93,7 @@ const AdminBookings: React.FC = () => {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brandOrange transition-colors" size={18} />
               <input 
                 type="text" 
-                placeholder="Search name, email, sector..."
+                placeholder="Search leads..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-12 pr-6 py-4 bg-white border border-slate-200 rounded-2xl outline-none focus:border-brandOrange transition-all font-bold text-navy w-full sm:w-80 shadow-sm"
@@ -99,7 +103,7 @@ const AdminBookings: React.FC = () => {
               onClick={downloadCSV}
               className="px-8 py-4 bg-navy text-white rounded-2xl font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:bg-brandOrange transition-all shadow-xl shadow-navy/10"
             >
-              <Download size={16} /> Export to CSV
+              <Download size={16} /> Export Intel
             </button>
           </div>
         </div>
@@ -107,19 +111,19 @@ const AdminBookings: React.FC = () => {
         {/* Stats Strip */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Bookings</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Entries</p>
                 <p className="text-2xl font-black text-navy">{bookings.length}</p>
             </div>
             <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Revenue Events</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Conversions</p>
                 <p className="text-2xl font-black text-green-600">{bookings.filter(b => b.paid).length}</p>
             </div>
             <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Conversion</p>
-                <p className="text-2xl font-black text-navy">{bookings.length ? Math.round((bookings.filter(b => b.paid).length / bookings.length) * 100) : 0}%</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Free Tiers</p>
+                <p className="text-2xl font-black text-blue-500">{bookings.filter(b => b.planId?.includes('free')).length}</p>
             </div>
             <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Pending Sync</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Unpaid Leads</p>
                 <p className="text-2xl font-black text-brandOrange">{bookings.filter(b => !b.paid).length}</p>
             </div>
         </div>
@@ -130,12 +134,13 @@ const AdminBookings: React.FC = () => {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-navy text-white">
-                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest">Client Details</th>
-                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest">Professional Context</th>
-                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest">Practice Nature</th>
+                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest">Customer</th>
+                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest">Industry & Field</th>
+                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest">Nature</th>
+                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest">Exam Specs</th>
                   <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest">Schedule</th>
-                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest">Financials</th>
-                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest">Admin Tags</th>
+                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest">Status</th>
+                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest">Tags</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -166,6 +171,22 @@ const AdminBookings: React.FC = () => {
                     </td>
                     <td className="px-6 py-6">
                       <div className="space-y-1">
+                        {booking.questionType ? (
+                          <>
+                            <p className="text-xs font-black text-navy flex items-center gap-2 italic">
+                              <HelpCircle size={14} className="text-brandOrange" /> {booking.questionType}
+                            </p>
+                            <p className="text-[10px] font-bold text-slate-400">
+                              {booking.examStandard}
+                            </p>
+                          </>
+                        ) : (
+                          <p className="text-[10px] text-slate-300 italic">Interview Based</p>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-6 py-6">
+                      <div className="space-y-1">
                         <p className="text-xs font-black text-navy flex items-center gap-2">
                           <Calendar size={14} /> {booking.date}
                         </p>
@@ -179,7 +200,7 @@ const AdminBookings: React.FC = () => {
                         {booking.paid ? (
                           <div className="flex items-center gap-2 text-green-600">
                             <CheckCircle size={16} />
-                            <span className="text-[10px] font-black uppercase tracking-widest">Paid</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest">Confirmed</span>
                           </div>
                         ) : (
                           <div className="flex items-center gap-2 text-red-400">
@@ -192,7 +213,10 @@ const AdminBookings: React.FC = () => {
                     <td className="px-6 py-6">
                         <div className="flex flex-wrap gap-1">
                             {booking.genderPreference && (
-                                <span className="text-[8px] bg-navy/5 text-navy px-2 py-0.5 rounded font-black uppercase">Pref: {booking.genderPreference}</span>
+                                <span className="text-[8px] bg-navy/5 text-navy px-2 py-0.5 rounded font-black uppercase">Gender: {booking.genderPreference}</span>
+                            )}
+                            {booking.planId?.includes('free') && (
+                                <span className="text-[8px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded font-black uppercase border border-blue-100">FREE TIER</span>
                             )}
                             <span className="text-[8px] bg-navy/5 text-navy px-2 py-0.5 rounded font-black uppercase">XP: {booking.experienceYears}yr</span>
                         </div>
@@ -202,15 +226,6 @@ const AdminBookings: React.FC = () => {
               </tbody>
             </table>
           </div>
-          
-          {filteredBookings.length === 0 && (
-            <div className="py-20 text-center space-y-4">
-              <div className="w-16 h-16 bg-slate-100 text-slate-300 rounded-full flex items-center justify-center mx-auto">
-                <Search size={32} />
-              </div>
-              <p className="font-bold text-slate-400 italic">No bookings match your current filter.</p>
-            </div>
-          )}
         </div>
       </div>
     </div>

@@ -19,7 +19,9 @@ import {
   Target,
   Users,
   AlertCircle,
-  Clock
+  Clock,
+  LayoutGrid,
+  FileText
 } from 'lucide-react';
 
 const SKILL_OPTIONS = ["Communication", "Leadership", "Technical Analysis", "Problem Solving", "Research", "Critical Thinking", "Clinical Knowledge", "Ethics", "Teamwork"];
@@ -44,6 +46,8 @@ const Booking: React.FC = () => {
     date: '',
     time: '',
     genderPreference: 'No Preference' as 'No Preference' | 'Male' | 'Female',
+    questionType: 'MCQ' as 'MCQ' | 'Theory',
+    examStandard: 'Local Standard' as 'Local Standard' | 'International Standard',
     applyingFor: '',
     experienceYears: '',
     skills: [] as string[],
@@ -131,7 +135,7 @@ const Booking: React.FC = () => {
         practiceCategory: 'General',
         date: formData.date,
         time: formData.time,
-        genderPreference: formData.genderPreference,
+        ...(formData.natureOfPractice === 'Job Interview' ? { genderPreference: formData.genderPreference } : { questionType: formData.questionType, examStandard: formData.examStandard }),
         applyingFor: formData.applyingFor || finalField,
         experienceYears: formData.experienceYears,
         skills: formData.skills,
@@ -143,7 +147,6 @@ const Booking: React.FC = () => {
 
       const sessionId = await saveBooking(sessionData);
 
-      // Only update profile if it wasn't already considered complete
       if (!isProfileComplete) {
         await updateUserProfile(user.uid, {
           professionalSector: formData.sector,
@@ -172,12 +175,13 @@ const Booking: React.FC = () => {
     );
   }
 
-  // Time range between 16:00 (4pm) and 22:00 (10pm)
   const timeOptions = [];
   for (let h = 16; h <= 22; h++) {
     timeOptions.push(`${h}:00`);
     if (h < 22) timeOptions.push(`${h}:30`);
   }
+
+  const isExam = formData.natureOfPractice === 'Exam';
 
   return (
     <div className="min-h-screen bg-slate-50 pt-32 pb-20 px-4 sm:px-6">
@@ -210,14 +214,6 @@ const Booking: React.FC = () => {
                             <p className="text-slate-500 font-medium">Select your sector and preferred time.</p>
                         </div>
                     </div>
-                    {formData.natureOfPractice === 'Job Interview' && (
-                        <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100 flex items-start gap-3 max-w-xs">
-                            <Users className="text-blue-600 shrink-0" size={20} />
-                            <p className="text-[10px] font-bold text-blue-800 leading-tight">
-                                Interviews are led by a panel of at least 2 qualified professionals in your field.
-                            </p>
-                        </div>
-                    )}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -245,19 +241,6 @@ const Booking: React.FC = () => {
                         </select>
                     </div>
 
-                    {formData.field === 'Other / Specify' && (
-                        <div className="md:col-span-2 space-y-2 animate-in slide-in-from-top duration-300">
-                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Specify Job Role</label>
-                             <input 
-                              type="text" 
-                              value={formData.customJob} 
-                              onChange={(e) => updateForm('customJob', e.target.value)} 
-                              className="w-full px-8 py-5 rounded-2xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-brandOrange transition-all font-bold text-navy" 
-                              placeholder="e.g. Senior Pathologist" 
-                             />
-                        </div>
-                    )}
-
                     <div className="space-y-2">
                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Practice Purpose</label>
                         <select 
@@ -272,7 +255,8 @@ const Booking: React.FC = () => {
                         </select>
                     </div>
 
-                    <div className="space-y-2">
+                    {!isExam && (
+                      <div className="space-y-2 animate-in fade-in duration-500">
                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Interviewer Gender Choice</label>
                         <select 
                           value={formData.genderPreference} 
@@ -283,7 +267,35 @@ const Booking: React.FC = () => {
                             <option value="Male">Male Only</option>
                             <option value="Female">Female Only</option>
                         </select>
-                    </div>
+                      </div>
+                    )}
+
+                    {isExam && (
+                      <>
+                        <div className="space-y-2 animate-in slide-in-from-top duration-500">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">Question Type <FileText size={12}/></label>
+                          <select 
+                            value={formData.questionType} 
+                            onChange={(e) => updateForm('questionType', e.target.value)} 
+                            className="w-full px-8 py-5 rounded-2xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-brandOrange transition-all font-bold text-navy appearance-none"
+                          >
+                              <option value="MCQ">MCQ</option>
+                              <option value="Theory">Theory</option>
+                          </select>
+                        </div>
+                        <div className="space-y-2 animate-in slide-in-from-top duration-500">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">Exam Standard <LayoutGrid size={12}/></label>
+                          <select 
+                            value={formData.examStandard} 
+                            onChange={(e) => updateForm('examStandard', e.target.value)} 
+                            className="w-full px-8 py-5 rounded-2xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-brandOrange transition-all font-bold text-navy appearance-none"
+                          >
+                              <option value="Local Standard">Local Standard</option>
+                              <option value="International Standard">International Standard</option>
+                          </select>
+                        </div>
+                      </>
+                    )}
 
                     <div className="space-y-2">
                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">Date (Min 4 days notice) <Target size={12}/></label>
@@ -311,7 +323,7 @@ const Booking: React.FC = () => {
 
                 <div className="mt-16 flex justify-end">
                     <button 
-                        disabled={!formData.field || !formData.date || !formData.time || !!dateError} 
+                        disabled={!formData.field || !formData.date || !formData.time || !!dateError || !formData.natureOfPractice} 
                         onClick={handleStep1Next} 
                         className="w-full sm:w-auto px-16 py-6 bg-navy text-white rounded-full font-black uppercase tracking-widest hover:bg-brandOrange transition-all shadow-xl disabled:opacity-30 flex items-center justify-center gap-3"
                     >

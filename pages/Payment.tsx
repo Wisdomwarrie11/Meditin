@@ -17,7 +17,8 @@ import {
   Calendar, 
   Sparkles,
   Award,
-  Users
+  Users,
+  Gift
 } from 'lucide-react';
 
 const Payment: React.FC = () => {
@@ -41,7 +42,6 @@ const Payment: React.FC = () => {
           }
           setSession({ ...data, id: docSnap.id });
           
-          // Auto-select the standard one-off plan for their type initially
           const initialType = data.natureOfPractice === 'Job Interview' ? PracticeType.INTERVIEW : PracticeType.EXAM;
           const defaultPlan = PRICING_PLANS.find(p => p.type === initialType && p.billingCycle === 'once');
           if (defaultPlan) setSelectedPlan(defaultPlan);
@@ -57,10 +57,28 @@ const Payment: React.FC = () => {
     fetchSession();
   }, [sessionId, navigate]);
 
-  const handlePay = () => {
+  const handlePay = async () => {
     if (!selectedPlan || !session || !sessionId) return;
     setIsProcessing(true);
     
+    if (selectedPlan.price === 0) {
+      // Handle free plan activation
+      try {
+        await updateBookingStatus(sessionId, { 
+          paid: true, 
+          status: 'SCHEDULED', 
+          planId: selectedPlan.id 
+        });
+        navigate('/success');
+      } catch (error) {
+        console.error(error);
+        alert("Failed to activate free tier.");
+      } finally {
+        setIsProcessing(false);
+      }
+      return;
+    }
+
     // Paystack test key
     const publicKey = 'pk_test_sample_key_12345'; 
     
@@ -120,50 +138,55 @@ const Payment: React.FC = () => {
             </div>
             <div className="bg-navy rounded-2xl px-6 py-3 text-white flex items-center gap-3 shadow-xl">
                <ShieldCheck size={20} className="text-brandOrange" />
-               <span className="text-[10px] font-black uppercase tracking-widest">Encrypted Checkout</span>
+               <span className="text-[10px] font-black uppercase tracking-widest">Secure Activation</span>
             </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
             <div className="lg:col-span-8 space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {filteredPlans.map(plan => (
                         <button 
                             key={plan.id}
                             onClick={() => setSelectedPlan(plan)}
-                            className={`relative w-full p-8 sm:p-10 rounded-[3rem] border-4 transition-all text-left flex flex-col justify-between group h-full ${selectedPlan?.id === plan.id ? 'border-brandOrange bg-white shadow-[0_25px_60px_-15px_rgba(249,115,22,0.15)]' : 'border-white bg-white hover:border-slate-100 hover:shadow-xl shadow-sm'}`}
+                            className={`relative w-full p-6 sm:p-8 rounded-[3rem] border-4 transition-all text-left flex flex-col justify-between group h-full ${selectedPlan?.id === plan.id ? 'border-brandOrange bg-white shadow-[0_25px_60px_-15px_rgba(249,115,22,0.15)]' : 'border-white bg-white hover:border-slate-100 hover:shadow-xl shadow-sm'}`}
                         >
                             {plan.billingCycle === 'monthly' && (
-                                <div className="absolute -top-3 right-8 bg-navy text-white text-[8px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-full flex items-center gap-2">
+                                <div className="absolute -top-3 right-6 bg-navy text-white text-[7px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-full flex items-center gap-2">
                                   <Zap size={10} className="text-brandOrange" /> Best Value
+                                </div>
+                            )}
+                            {plan.billingCycle === 'free' && (
+                                <div className="absolute -top-3 right-6 bg-slate-200 text-slate-500 text-[7px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-full flex items-center gap-2">
+                                  <Gift size={10} /> Starter
                                 </div>
                             )}
                             
                             <div className="space-y-6">
-                                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-colors ${selectedPlan?.id === plan.id ? 'bg-brandOrange text-white' : 'bg-slate-50 text-slate-400 group-hover:bg-navy group-hover:text-white'}`}>
-                                    {plan.billingCycle === 'monthly' ? <Calendar size={24} /> : <Award size={24} />}
+                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${selectedPlan?.id === plan.id ? 'bg-brandOrange text-white' : 'bg-slate-50 text-slate-400 group-hover:bg-navy group-hover:text-white'}`}>
+                                    {plan.billingCycle === 'monthly' ? <Calendar size={20} /> : plan.billingCycle === 'free' ? <Gift size={20} /> : <Award size={20} />}
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-black text-navy leading-none mb-2">{plan.name}</h3>
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">
-                                        {plan.billingCycle === 'monthly' ? 'Monthly Subscription' : 'Single Practice Session'}
+                                    <h3 className="text-lg font-black text-navy leading-none mb-2">{plan.name}</h3>
+                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">
+                                        {plan.billingCycle === 'monthly' ? 'Subscription' : plan.billingCycle === 'free' ? 'Limited Access' : 'Single Session'}
                                     </p>
                                 </div>
                                 <div className="pt-2">
-                                    <p className="text-3xl font-black text-navy">₦{plan.price.toLocaleString()}</p>
+                                    <p className="text-2xl font-black text-navy">{plan.price === 0 ? 'FREE' : `₦${plan.price.toLocaleString()}`}</p>
                                 </div>
-                                <ul className="space-y-3 pt-6 border-t border-slate-50">
+                                <ul className="space-y-2 pt-4 border-t border-slate-50">
                                     {plan.features.map((f, i) => (
-                                        <li key={i} className="flex items-start gap-3 text-xs font-medium text-slate-500">
-                                            <div className="mt-1 p-0.5 bg-green-500 text-white rounded-full"><Check size={8} strokeWidth={4}/></div>
+                                        <li key={i} className="flex items-start gap-2 text-[10px] font-medium text-slate-500">
+                                            <div className={`mt-0.5 p-0.5 ${plan.billingCycle === 'free' ? 'bg-slate-300' : 'bg-green-500'} text-white rounded-full`}><Check size={6} strokeWidth={4}/></div>
                                             {f}
                                         </li>
                                     ))}
                                 </ul>
                             </div>
 
-                            <div className={`mt-8 w-full py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] text-center transition-all ${selectedPlan?.id === plan.id ? 'bg-brandOrange text-white' : 'bg-slate-100 text-slate-400 group-hover:bg-navy group-hover:text-white'}`}>
-                                {selectedPlan?.id === plan.id ? 'Selected Tier' : 'Select Plan'}
+                            <div className={`mt-6 w-full py-3 rounded-2xl font-black uppercase tracking-widest text-[9px] text-center transition-all ${selectedPlan?.id === plan.id ? 'bg-brandOrange text-white' : 'bg-slate-100 text-slate-400 group-hover:bg-navy group-hover:text-white'}`}>
+                                {selectedPlan?.id === plan.id ? 'Selected' : 'Choose'}
                             </div>
                         </button>
                     ))}
@@ -175,12 +198,12 @@ const Payment: React.FC = () => {
                     <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none"><Users size={120} /></div>
                     
                     <div className="space-y-2">
-                        <p className="text-[10px] font-black text-brandOrange uppercase tracking-[0.4em]">Checkout Intel</p>
+                        <p className="text-[10px] font-black text-brandOrange uppercase tracking-[0.4em]">Review Specs</p>
                         <h3 className="text-3xl font-black tracking-tighter">Order Summary</h3>
                     </div>
 
                     <div className="space-y-5 bg-white/5 p-8 rounded-[2.5rem] border border-white/10 flex-1">
-                        <div className="flex justify-between items-center group/item">
+                        <div className="flex justify-between items-center">
                            <span className="text-white/40 font-black text-[9px] uppercase tracking-widest">Client</span>
                            <span className="font-black text-sm truncate max-w-[150px]">{session.fullName}</span>
                         </div>
@@ -192,18 +215,25 @@ const Payment: React.FC = () => {
                            <span className="text-white/40 font-black text-[9px] uppercase tracking-widest">Field</span>
                            <span className="font-black text-sm">{session.field}</span>
                         </div>
-                        <div className="flex justify-between items-center">
-                           <span className="text-white/40 font-black text-[9px] uppercase tracking-widest">Schedule</span>
-                           <span className="font-black text-sm">{new Date(session.date).toLocaleDateString()} @ {session.time}</span>
-                        </div>
+                        {session.questionType && (
+                          <div className="flex justify-between items-center">
+                             <span className="text-white/40 font-black text-[9px] uppercase tracking-widest">Type</span>
+                             <span className="font-black text-sm">{session.questionType}</span>
+                          </div>
+                        )}
+                        {session.examStandard && (
+                          <div className="flex justify-between items-center">
+                             <span className="text-white/40 font-black text-[9px] uppercase tracking-widest">Standard</span>
+                             <span className="font-black text-sm">{session.examStandard}</span>
+                          </div>
+                        )}
                         
                         {selectedPlan && (
                             <div className="pt-8 mt-4 border-t border-white/10 space-y-4">
                                 <div className="flex justify-between items-center">
-                                    <span className="text-brandOrange font-black uppercase text-[10px] tracking-widest">Subtotal</span>
-                                    <span className="text-2xl font-black">₦{selectedPlan.price.toLocaleString()}</span>
+                                    <span className="text-brandOrange font-black uppercase text-[10px] tracking-widest">Total</span>
+                                    <span className="text-2xl font-black">{selectedPlan.price === 0 ? '₦0' : `₦${selectedPlan.price.toLocaleString()}`}</span>
                                 </div>
-                                <p className="text-[9px] font-bold text-white/30 italic text-center">Includes all professional feedback and analytics.</p>
                             </div>
                         )}
                     </div>
@@ -214,13 +244,8 @@ const Payment: React.FC = () => {
                         className="w-full py-6 bg-brandOrange text-white rounded-full font-black uppercase tracking-widest hover:bg-white hover:text-navy transition-all shadow-2xl shadow-brandOrange/20 active:scale-95 disabled:opacity-30 flex items-center justify-center gap-4 text-sm"
                     >
                         {isProcessing ? <Loader2 className="animate-spin" /> : <CreditCard size={20} />} 
-                        {isProcessing ? 'Connecting...' : `Secure Session`}
+                        {isProcessing ? 'Activating...' : selectedPlan?.price === 0 ? 'Activate Free Tier' : 'Secure Session'}
                     </button>
-
-                    <div className="flex items-center justify-center gap-2 opacity-30">
-                        <Sparkles size={14} />
-                        <span className="text-[8px] font-black uppercase tracking-widest">Powering Professional Growth</span>
-                    </div>
                 </div>
             </div>
         </div>

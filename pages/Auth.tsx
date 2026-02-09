@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, ArrowRight, Loader2, Sparkles, ChevronLeft, AlertCircle } from 'lucide-react';
 import { registerUser, loginUser } from '../services/authService';
-import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
 
+// Fix: Replaced useHistory with useNavigate for compatibility with React Router v6
 const Auth: React.FC = () => {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
@@ -27,8 +27,8 @@ const Auth: React.FC = () => {
       }
       
       if (user) {
-        // Check if user has already completed their professional profile
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        // Check if user has already completed their professional profile using compat namespaced API
+        const userDoc = await db.collection('users').doc(user.uid).get();
         const userData = userDoc.data();
         
         // If professionalField exists, they've done the profile step

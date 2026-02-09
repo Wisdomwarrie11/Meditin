@@ -29,6 +29,14 @@ export const CAREER_FIELDS: CareerField[] = [
 export const PRICING_PLANS: PricingPlan[] = [
   // Interview Plans
   {
+    id: 'int_free',
+    name: 'Interview Free Tier',
+    price: 0,
+    type: PracticeType.INTERVIEW,
+    features: ['1 Session every 3 months', 'Max 15-Min Session', 'Feedback of Strengths & Weaknesses'],
+    billingCycle: 'free'
+  },
+  {
     id: 'int_one_off',
     name: 'Interview One-Off',
     price: 4000,
@@ -45,6 +53,14 @@ export const PRICING_PLANS: PricingPlan[] = [
     billingCycle: 'monthly'
   },
   // Exam/Test Plans
+  {
+    id: 'exam_free',
+    name: 'Exam/Test Free Tier',
+    price: 0,
+    type: PracticeType.EXAM,
+    features: ['3 Time Trials in 6 months', 'Standard Feedback', 'Basic Result Analytics'],
+    billingCycle: 'free'
+  },
   {
     id: 'exam_one_off',
     name: 'Exam/Test One-Off',

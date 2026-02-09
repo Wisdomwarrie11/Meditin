@@ -3,8 +3,9 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle2, Mail, Calendar, ArrowRight, ShieldCheck, Clock } from 'lucide-react';
 
+// Fix: Replaced useNavigate with useHistory for compatibility with React Router v5
 const Success: React.FC = () => {
-  const navigate = useNavigate();
+  const history = useNavigate();
 
   return (
     <div className="min-h-screen bg-medical-hero flex items-center justify-center px-6 py-12">
@@ -41,7 +42,7 @@ const Success: React.FC = () => {
         </div>
 
         <button 
-          onClick={() => navigate('/')}
+          onClick={() => history('/')}
           className="w-full py-6 bg-brandOrange text-white rounded-full font-black flex items-center justify-center gap-3 hover:bg-navy transition-all"
         >
           Return to Home <ArrowRight size={20} />

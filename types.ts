@@ -46,7 +46,7 @@ export interface PricingPlan {
   price: number;
   type: PracticeType;
   features: string[];
-  billingCycle?: 'once' | 'monthly';
+  billingCycle?: 'once' | 'monthly' | 'free';
 }
 
 export interface PracticeSession {
@@ -63,6 +63,8 @@ export interface PracticeSession {
   time: string;
   planId?: string;
   genderPreference?: 'No Preference' | 'Male' | 'Female';
+  questionType?: 'MCQ' | 'Theory';
+  examStandard?: 'Local Standard' | 'International Standard';
   applyingFor?: string;
   experienceYears?: string;
   skills?: string[];
