@@ -20,40 +20,23 @@ service cloud.firestore {
       allow read, write: if isOwner(userId) || isAdmin();
     }
 
-    // Medical Fields & Categories
-    match /medicalFields/{fieldId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-    
-    match /examCategories/{catId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
     // Practice Sessions
     match /practiceSessions/{sessionId} {
       allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
       allow create: if isSignedIn();
-      allow update: if isAdmin();
+      // SECURITY: Users cannot update 'paid' or 'status' fields. 
+      // Only an Admin (Cloud Function) can perform these updates.
+      allow update: if isAdmin() || (
+        isSignedIn() && 
+        resource.data.userId == request.auth.uid && 
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['paid', 'status', 'planId'])
+      );
     }
 
-    // Payments - Verified by Cloud Functions
-    match /payments/{paymentId} {
+    // Performance Scores
+    match /performanceScores/{scoreId} {
       allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
-      allow write: if false; // Only Cloud Functions should update payment statuses
-    }
-
-    // Exam Questions - Highly sensitive
-    match /exams/{examId} {
-      allow read: if isSignedIn(); // Add more complex check for active paid session if needed
-      allow write: if isAdmin();
-    }
-
-    // Feedback
-    match /feedback/{feedbackId} {
-      allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
-      allow create: if false; // Created via backend after exam completion
+      allow create: if isSignedIn();
     }
   }
 }
