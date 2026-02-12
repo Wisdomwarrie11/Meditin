@@ -27,14 +27,14 @@ export const CAREER_FIELDS: CareerField[] = [
 ];
 
 export const PRICING_PLANS: PricingPlan[] = [
-  // --- INTERVIEW PLANS (ONE-OFF) ---
+  // --- INTERVIEW PLANS (ONE-OFF ONLY) ---
   {
-    id: 'int_bronze_once',
-    name: 'Bronze Panel',
-    price: 0,
+    id: 'int_basic_once',
+    name: 'Basic Plan',
+    price: 2500,
     type: PracticeType.INTERVIEW,
-    features: ['1 General HR Expert', '5-Minute Rapid Mock', 'Detailed Performance Feedback', 'One-off Access'],
-    billingCycle: 'free'
+    features: ['1 Meditin Representative', '7-Minute Rapid Mock', 'User-Requested Questions (Max 5)', 'Instant Feedback'],
+    billingCycle: 'once'
   },
   {
     id: 'int_silver_once',
@@ -61,33 +61,7 @@ export const PRICING_PLANS: PricingPlan[] = [
     billingCycle: 'once'
   },
 
-  // --- INTERVIEW PLANS (ONE-MONTH SUBSCRIPTION) ---
-  {
-    id: 'int_silver_sub',
-    name: 'Silver Monthly',
-    price: 18000,
-    type: PracticeType.INTERVIEW,
-    features: ['1 Session Per Day', '1 Professional + 1 General HR', '15-Minute Daily Mocks', 'Continuous Growth Map'],
-    billingCycle: 'monthly'
-  },
-  {
-    id: 'int_gold_sub',
-    name: 'Gold Monthly',
-    price: 38500,
-    type: PracticeType.INTERVIEW,
-    features: ['1 Session Per Day', '2 Professionals + 1 General HR', '20-Minute Daily Mocks', 'Priority Expert Matching'],
-    billingCycle: 'monthly'
-  },
-  {
-    id: 'int_diamond_sub',
-    name: 'Diamond Monthly',
-    price: 58500,
-    type: PracticeType.INTERVIEW,
-    features: ['1 Session Per Day', '3 Professionals + 1 Specific HR', 'Custom Concentration Duration', 'Job Placement Support'],
-    billingCycle: 'monthly'
-  },
-
-  // --- EXAM/TEST PLANS (REMAINS THE SAME) ---
+  // --- EXAM/TEST PLANS ---
   {
     id: 'exam_free',
     name: 'Exam/Test Free Tier',
