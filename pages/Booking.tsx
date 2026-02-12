@@ -1,12 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
+// Updated to react-router-dom v6 syntax
 import { useNavigate } from 'react-router-dom';
 import { SECTORS, SECTOR_MAPPING } from '../constants';
 import { PracticeSession, UserProfile } from '../types';
 import { saveBooking, updateUserProfile } from '../services/firestoreService';
 import { onAuthStateChange } from '../services/authService';
 import { auth, db } from '../services/firebase';
-import { doc, getDoc } from 'firebase/firestore';
 import { 
   Check, 
   ChevronRight, 
@@ -15,14 +15,13 @@ import {
   BrainCircuit,
   Loader2,
   Sparkles,
-  Trophy,
   Target,
-  Users,
-  AlertCircle,
   Clock,
   LayoutGrid,
-  FileText
+  FileText,
+  UserCheck
 } from 'lucide-react';
+import { doc, getDoc } from 'firebase/firestore';
 
 const SKILL_OPTIONS = ["Communication", "Leadership", "Technical Analysis", "Problem Solving", "Research", "Critical Thinking", "Clinical Knowledge", "Ethics", "Teamwork"];
 const QUALIFICATIONS = ["Diploma", "Bachelor's Degree", "Master's Degree", "PhD", "Fellowship", "Specialized Certificate"];
@@ -43,6 +42,7 @@ const Booking: React.FC = () => {
     field: '',
     customJob: '',
     natureOfPractice: '',
+    applicationType: 'Professional' as 'Intern' | 'Professional',
     date: '',
     time: '',
     genderPreference: 'No Preference' as 'No Preference' | 'Male' | 'Female',
@@ -59,9 +59,9 @@ const Booking: React.FC = () => {
       if (!user) {
         navigate('/auth');
       } else {
-        const docSnap = await getDoc(doc(db, 'users', user.uid));
-        if (docSnap.exists()) {
-          const profile = docSnap.data() as UserProfile;
+        const userSnap = await getDoc(doc(db, 'users', user.uid));
+        if (userSnap.exists()) {
+          const profile = userSnap.data() as UserProfile;
           setUserProfile(profile);
           setFormData(prev => ({ 
             ...prev, 
@@ -132,6 +132,7 @@ const Booking: React.FC = () => {
         sector: formData.sector,
         field: finalField,
         natureOfPractice: formData.natureOfPractice,
+        applicationType: formData.applicationType,
         practiceCategory: 'General',
         date: formData.date,
         time: formData.time,
@@ -175,11 +176,11 @@ const Booking: React.FC = () => {
     );
   }
 
-  const timeOptions = [];
-  for (let h = 16; h <= 22; h++) {
-    timeOptions.push(`${h}:00`);
-    if (h < 22) timeOptions.push(`${h}:30`);
-  }
+  // Generate time options: 4:30 PM to 9:00 PM
+  const timeOptions = [
+    "4:30 PM", "5:00 PM", "5:30 PM", "6:00 PM", "6:30 PM", 
+    "7:00 PM", "7:30 PM", "8:00 PM", "8:30 PM", "9:00 PM"
+  ];
 
   const isExam = formData.natureOfPractice === 'Exam';
 
@@ -239,6 +240,26 @@ const Booking: React.FC = () => {
                             <option value="">Select Field</option>
                             {formData.sector && SECTOR_MAPPING[formData.sector]?.map(f => <option key={f} value={f}>{f}</option>)}
                         </select>
+                    </div>
+
+                    <div className="space-y-6 md:col-span-2">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2"><UserCheck size={12} /> Application Level</label>
+                        <div className="grid grid-cols-2 gap-4">
+                           <button 
+                            type="button"
+                            onClick={() => updateForm('applicationType', 'Intern')}
+                            className={`py-5 rounded-2xl font-black uppercase tracking-widest text-xs transition-all border-2 ${formData.applicationType === 'Intern' ? 'bg-navy text-white border-navy shadow-xl' : 'bg-slate-50 text-slate-400 border-slate-100 hover:border-brandOrange/30'}`}
+                           >
+                             Intern / Student
+                           </button>
+                           <button 
+                            type="button"
+                            onClick={() => updateForm('applicationType', 'Professional')}
+                            className={`py-5 rounded-2xl font-black uppercase tracking-widest text-xs transition-all border-2 ${formData.applicationType === 'Professional' ? 'bg-navy text-white border-navy shadow-xl' : 'bg-slate-50 text-slate-400 border-slate-100 hover:border-brandOrange/30'}`}
+                           >
+                             Professional
+                           </button>
+                        </div>
                     </div>
 
                     <div className="space-y-2">
@@ -309,11 +330,11 @@ const Booking: React.FC = () => {
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">Time (4PM - 10PM) <Clock size={12}/></label>
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">Time (4:30 PM - 9:00 PM) <Clock size={12}/></label>
                         <select 
                           value={formData.time} 
                           onChange={(e) => updateForm('time', e.target.value)} 
-                          className="w-full px-8 py-5 rounded-2xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-brandOrange transition-all font-bold text-navy appearance-none"
+                          className="w-full px-8 py-5 rounded-2xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-brandOrange outline-none transition-all font-bold text-navy appearance-none"
                         >
                             <option value="">Select Time</option>
                             {timeOptions.map(t => <option key={t} value={t}>{t}</option>)}

@@ -58,6 +58,7 @@ export interface PracticeSession {
   sector: string;
   field: string;
   natureOfPractice: string;
+  applicationType?: 'Intern' | 'Professional';
   practiceCategory: string;
   date: string;
   time: string;
@@ -69,7 +70,8 @@ export interface PracticeSession {
   experienceYears?: string;
   skills?: string[];
   qualification?: string;
-  status: 'PENDING_PAYMENT' | 'SCHEDULED' | 'COMPLETED' | 'CANCELLED';
+  // Added 'WAITING_LIST' to the status union type
+  status: 'PENDING_PAYMENT' | 'SCHEDULED' | 'COMPLETED' | 'CANCELLED' | 'WAITING_LIST';
   paid: boolean;
   createdAt: number;
 }

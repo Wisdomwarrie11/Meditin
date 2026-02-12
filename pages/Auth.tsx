@@ -1,11 +1,12 @@
 
 import React, { useState } from 'react';
+// Updated to react-router-dom v6 syntax
 import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, ArrowRight, Loader2, Sparkles, ChevronLeft, AlertCircle } from 'lucide-react';
 import { registerUser, loginUser } from '../services/authService';
+import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
 
-// Fix: Replaced useHistory with useNavigate for compatibility with React Router v6
 const Auth: React.FC = () => {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
@@ -27,11 +28,10 @@ const Auth: React.FC = () => {
       }
       
       if (user) {
-        // Check if user has already completed their professional profile using compat namespaced API
-        const userDoc = await db.collection('users').doc(user.uid).get();
-        const userData = userDoc.data();
+        const userDocRef = doc(db, 'users', user.uid);
+        const userSnap = await getDoc(userDocRef);
+        const userData = userSnap.data();
         
-        // If professionalField exists, they've done the profile step
         if (userData && userData.professionalField) {
           navigate('/dashboard');
         } else {
@@ -53,7 +53,6 @@ const Auth: React.FC = () => {
 
   return (
     <div className="min-h-screen flex bg-white selection:bg-brandOrange selection:text-white">
-      {/* Left: Branding & Visuals */}
       <div className="hidden lg:flex lg:w-1/2 bg-navy relative items-center justify-center p-20 overflow-hidden">
         <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-brandOrange/20 via-transparent to-transparent opacity-50" />
         <div className="relative z-10 space-y-8">
@@ -69,7 +68,6 @@ const Auth: React.FC = () => {
         </div>
       </div>
 
-      {/* Right: Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-20 relative">
         <button 
           onClick={() => navigate('/')}

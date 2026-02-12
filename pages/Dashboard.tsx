@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+// Updated to react-router-dom v6 syntax
 import { useNavigate } from 'react-router-dom';
 import { 
   Plus, 
@@ -10,15 +11,11 @@ import {
   BookOpen,
   LogOut,
   Bell,
-  CreditCard,
   Target,
-  UserCircle,
   Activity,
-  ChevronRight,
   Loader2,
   Trophy,
   Briefcase,
-  AlertCircle,
   Settings,
   X,
   Save,
@@ -26,10 +23,10 @@ import {
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { auth, db } from '../services/firebase';
-import { doc, getDoc } from 'firebase/firestore';
 import { logoutUser } from '../services/authService';
 import { getMyBookings, getPerformanceScores, logPerformanceScore, updateUserProfile } from '../services/firestoreService';
 import { PracticeSession, PerformanceScore, UserProfile } from '../types';
+import { doc, getDoc } from 'firebase/firestore';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -41,11 +38,9 @@ const Dashboard: React.FC = () => {
   const [activeNotification, setActiveNotification] = useState<string | null>(null);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
 
-  // Manual Score Entry State
   const [newScore, setNewScore] = useState({ title: '', score: '' });
   const [isLogging, setIsLogging] = useState(false);
 
-  // Edit Profile State
   const [editFormData, setEditFormData] = useState<Partial<UserProfile>>({});
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
 
@@ -56,8 +51,8 @@ const Dashboard: React.FC = () => {
       } else {
         setUser(u);
         try {
-          const userDoc = await getDoc(doc(db, 'users', u.uid));
-          const profileData = userDoc.data() as UserProfile;
+          const userSnap = await getDoc(doc(db, 'users', u.uid));
+          const profileData = userSnap.data() as UserProfile;
           setProfile(profileData);
           setEditFormData(profileData || {});
 
@@ -81,11 +76,11 @@ const Dashboard: React.FC = () => {
   const checkForNotifications = (sessions: PracticeSession[]) => {
     const now = new Date();
     const imminentSession = sessions.find(s => {
-      if (!s.paid) return false;
+      if (!s.paid && s.status !== 'WAITING_LIST') return false;
       const sessionTime = new Date(`${s.date}T${s.time}`);
       const diffMs = sessionTime.getTime() - now.getTime();
       const diffMins = diffMs / (1000 * 60);
-      return diffMins > 0 && diffMins < 180; // Within 3 hours
+      return diffMins > 0 && diffMins < 180;
     });
 
     if (imminentSession) {
@@ -166,7 +161,7 @@ const Dashboard: React.FC = () => {
             </div>
             <div>
               <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-navy leading-none tracking-tighter">Hello, {profile?.displayName?.split(' ')[0] || user.displayName?.split(' ')[0] || 'Pro'}</h1>
-              <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2 sm:mt-4">
+              <div className="flex wrap items-center gap-2 sm:gap-3 mt-2 sm:mt-4">
                 <span className="px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-[8px] sm:text-[10px] font-black uppercase tracking-widest border border-slate-200">Tier: Aspiring Elite</span>
                 <span className="text-[8px] sm:text-[10px] font-black text-slate-300 uppercase tracking-widest truncate max-w-[150px]">{user.email}</span>
               </div>
@@ -175,9 +170,9 @@ const Dashboard: React.FC = () => {
           <div className="flex gap-3 sm:gap-4 z-10 shrink-0 mt-2 sm:mt-0">
             <button 
               onClick={() => navigate('/book')}
-              className="flex-1 sm:flex-none px-6 sm:px-10 py-4 sm:py-5 bg-navy text-white rounded-full font-black uppercase tracking-widest text-[8px] sm:text-[10px] shadow-2xl shadow-navy/20 hover:bg-brandOrange hover:scale-105 transition-all flex items-center justify-center gap-2"
+              className="flex-1 sm:flex-none px-8 sm:px-14 py-5 sm:py-7 bg-navy text-white rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs sm:text-sm shadow-2xl shadow-navy/40 hover:bg-brandOrange hover:scale-105 transition-all flex items-center justify-center gap-3 border-4 border-white/10"
             >
-              <Plus size={14} /> New Mock Session
+              <Plus size={18} strokeWidth={4} /> New Mock Session
             </button>
             <button 
               onClick={() => { logoutUser(); navigate('/auth'); }}
@@ -258,16 +253,19 @@ const Dashboard: React.FC = () => {
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
-                       <span className={`px-4 py-1.5 rounded-full text-[8px] font-black uppercase tracking-widest border ${booking.paid ? 'bg-green-50 text-green-600 border-green-100' : 'bg-red-50 text-red-600 border-red-100'}`}>
-                          {booking.paid ? 'Confirmed' : 'Unpaid'}
+                       <span className={`px-4 py-1.5 rounded-full text-[8px] font-black uppercase tracking-widest border ${booking.status === 'WAITING_LIST' ? 'bg-orange-50 text-orange-600 border-orange-100' : booking.paid ? 'bg-green-50 text-green-600 border-green-100' : 'bg-red-50 text-red-600 border-red-100'}`}>
+                          {booking.status === 'WAITING_LIST' ? 'Waiting List' : booking.paid ? 'Confirmed' : 'Unpaid'}
                        </span>
-                       {!booking.paid && (
+                       {!booking.paid && booking.status !== 'WAITING_LIST' && (
                          <button 
                             onClick={() => navigate(`/payment/${booking.id}`)}
                             className="px-6 py-2 bg-brandOrange text-white rounded-xl text-[8px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg"
                          >
                             Pay & Secure
                          </button>
+                       )}
+                       {booking.status === 'WAITING_LIST' && (
+                         <div className="text-[8px] font-black text-slate-400 uppercase italic">Awaiting Invoice</div>
                        )}
                     </div>
                   </div>
@@ -369,7 +367,6 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Edit Profile Modal */}
       {isEditProfileOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-navy/90 backdrop-blur-sm animate-in fade-in duration-300">
            <div className="bg-white w-full max-w-lg rounded-[3rem] p-8 sm:p-12 shadow-2xl space-y-8 animate-in zoom-in duration-300 max-h-[90vh] overflow-y-auto">
@@ -393,7 +390,7 @@ const Dashboard: React.FC = () => {
                     <select 
                       value={editFormData.experienceYears || ''} 
                       onChange={e => setEditFormData({...editFormData, experienceYears: e.target.value})}
-                      className="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 font-bold text-navy outline-none focus:border-brandOrange transition-all"
+                      className="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 font-bold text-navy outline-none focus:border-brandOrange transition-all" 
                     >
                         <option value="">Select range</option>
                         <option value="0-1">0 - 1 Year</option>

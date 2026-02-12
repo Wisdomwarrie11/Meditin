@@ -20,39 +20,74 @@ export const MEDICAL_FIELDS: CareerField[] = [
 
 export const CAREER_FIELDS: CareerField[] = [
   { id: 'tech', name: 'Technology & Engineering', description: 'Software, Data, Product, and Hardware roles.' },
-  { id: 'med', name: 'Healthcare & Nursing', description: 'Doctors, Nurses, and Medical Specialists.' },
+  { id: 'med', name: 'Healthcare & Nursing', description: 'Doctors, Nurses, and Specialists.' },
   { id: 'fin', name: 'Finance & Consulting', description: 'Banking, Audit, Strategy, and Investment.' },
   { id: 'law', name: 'Law & Corporate Legal', description: 'Corporate, Criminal, and Legal Excellence.' },
   { id: 'edu', name: 'Education & Research', description: 'Teaching, Lecturing, and Global Research.' },
 ];
 
 export const PRICING_PLANS: PricingPlan[] = [
-  // Interview Plans
+  // --- INTERVIEW PLANS (ONE-OFF) ---
   {
-    id: 'int_free',
-    name: 'Interview Free Tier',
+    id: 'int_bronze_once',
+    name: 'Bronze Panel',
     price: 0,
     type: PracticeType.INTERVIEW,
-    features: ['1 Session every 3 months', 'Max 15-Min Session', 'Feedback of Strengths & Weaknesses'],
+    features: ['1 General HR Expert', '5-Minute Rapid Mock', 'Detailed Performance Feedback', 'One-off Access'],
     billingCycle: 'free'
   },
   {
-    id: 'int_one_off',
-    name: 'Interview One-Off',
-    price: 4000,
+    id: 'int_silver_once',
+    name: 'Silver Panel',
+    price: 5000,
     type: PracticeType.INTERVIEW,
-    features: ['30-Min Session', 'Panel of Professionals', 'Strengths & Weaknesses Feedback', 'Career Guidance'],
+    features: ['1 Professional + 1 General HR', '15-Minute Session', 'Deep Expert Feedback', 'Session Recording'],
     billingCycle: 'once'
   },
   {
-    id: 'int_monthly',
-    name: 'Interview Monthly Master',
-    price: 14500,
+    id: 'int_gold_once',
+    name: 'Gold Panel',
+    price: 10000,
     type: PracticeType.INTERVIEW,
-    features: ['4 Sessions (1 per week)', '30-Min per Session', 'Deep Feedback Analytics', 'Priority Scheduling'],
+    features: ['2 Professionals + 1 General HR', '20-Minute Master Session', 'Advanced Analytical Review', 'Professional Reference'],
+    billingCycle: 'once'
+  },
+  {
+    id: 'int_diamond_once',
+    name: 'Diamond Panel',
+    price: 15000,
+    type: PracticeType.INTERVIEW,
+    features: ['3 Professionals + 1 Specific HR', 'Custom Duration (Extended)', 'Area of Concentration Prep', 'Elite Career Roadmap'],
+    billingCycle: 'once'
+  },
+
+  // --- INTERVIEW PLANS (ONE-MONTH SUBSCRIPTION) ---
+  {
+    id: 'int_silver_sub',
+    name: 'Silver Monthly',
+    price: 18000,
+    type: PracticeType.INTERVIEW,
+    features: ['1 Session Per Day', '1 Professional + 1 General HR', '15-Minute Daily Mocks', 'Continuous Growth Map'],
     billingCycle: 'monthly'
   },
-  // Exam/Test Plans
+  {
+    id: 'int_gold_sub',
+    name: 'Gold Monthly',
+    price: 38500,
+    type: PracticeType.INTERVIEW,
+    features: ['1 Session Per Day', '2 Professionals + 1 General HR', '20-Minute Daily Mocks', 'Priority Expert Matching'],
+    billingCycle: 'monthly'
+  },
+  {
+    id: 'int_diamond_sub',
+    name: 'Diamond Monthly',
+    price: 58500,
+    type: PracticeType.INTERVIEW,
+    features: ['1 Session Per Day', '3 Professionals + 1 Specific HR', 'Custom Concentration Duration', 'Job Placement Support'],
+    billingCycle: 'monthly'
+  },
+
+  // --- EXAM/TEST PLANS (REMAINS THE SAME) ---
   {
     id: 'exam_free',
     name: 'Exam/Test Free Tier',

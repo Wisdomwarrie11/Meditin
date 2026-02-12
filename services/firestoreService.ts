@@ -4,14 +4,13 @@ import {
   addDoc, 
   updateDoc, 
   doc, 
+  getDoc, 
+  getDocs, 
   query, 
   where, 
-  getDocs,
-  serverTimestamp,
-  setDoc,
-  getDoc,
   orderBy,
-  limit
+  setDoc,
+  serverTimestamp 
 } from 'firebase/firestore';
 import { db } from './firebase';
 import { PracticeSession, UserProfile, PerformanceScore } from '../types';
@@ -20,7 +19,7 @@ export const saveBooking = async (sessionData: PracticeSession): Promise<string>
   try {
     const docRef = await addDoc(collection(db, "practiceSessions"), {
       ...sessionData,
-      createdAt: serverTimestamp(),
+      createdAt: Date.now(),
     });
     return docRef.id;
   } catch (error) {
@@ -43,7 +42,7 @@ export const logPerformanceScore = async (scoreData: PerformanceScore) => {
   try {
     await addDoc(collection(db, "performanceScores"), {
       ...scoreData,
-      date: serverTimestamp()
+      date: Date.now()
     });
   } catch (error) {
     console.error("Error logging score:", error);
@@ -71,9 +70,9 @@ export const updateUserProfile = async (uid: string, profileData: Partial<UserPr
     const userRef = doc(db, 'users', uid);
     const userSnap = await getDoc(userRef);
     if (userSnap.exists()) {
-      await updateDoc(userRef, { ...profileData, updatedAt: serverTimestamp() });
+      await updateDoc(userRef, { ...profileData, updatedAt: Date.now() });
     } else {
-      await setDoc(userRef, { ...profileData, uid, createdAt: serverTimestamp(), role: 'STUDENT' });
+      await setDoc(userRef, { ...profileData, uid, createdAt: Date.now(), role: 'STUDENT' });
     }
   } catch (error) {
     console.error("Error updating profile:", error);
@@ -88,8 +87,8 @@ export const getMyBookings = async (userId: string): Promise<PracticeSession[]> 
       where("userId", "==", userId),
       orderBy("createdAt", "desc")
     );
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as PracticeSession));
+    const snap = await getDocs(q);
+    return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as PracticeSession));
   } catch (error) {
     console.error("Error fetching bookings:", error);
     return [];
@@ -98,12 +97,9 @@ export const getMyBookings = async (userId: string): Promise<PracticeSession[]> 
 
 export const getAllBookings = async (): Promise<PracticeSession[]> => {
   try {
-    const q = query(
-      collection(db, "practiceSessions"), 
-      orderBy("createdAt", "desc")
-    );
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as PracticeSession));
+    const q = query(collection(db, "practiceSessions"), orderBy("createdAt", "desc"));
+    const snap = await getDocs(q);
+    return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as PracticeSession));
   } catch (error) {
     console.error("Error fetching all bookings:", error);
     return [];
