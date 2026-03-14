@@ -125,7 +125,7 @@ const Home: React.FC = () => {
   return (
     <div className="bg-[#FCFCFD] selection:bg-brandOrange selection:text-white overflow-x-hidden">
       {/* Dynamic Hero Section */}
-      <section className="relative min-h-[200vh] flex items-center pt-24 pb-12">
+      <section className="relative min-h-[150vh] flex items-center pt-24 pb-12">
         {/* Background Accents */}
         <div className="absolute top-0 right-0 w-[60%] h-full bg-navy/5 -skew-x-12 translate-x-32 -z-10 hidden lg:block" />
         <div className="absolute bottom-20 left-10 w-64 h-64 bg-brandOrange/10 rounded-full blur-[120px] -z-10" />
