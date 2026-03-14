@@ -43,13 +43,6 @@ const Navbar: React.FC = () => {
           scrolled ? 'bg-white/80 backdrop-blur-lg shadow-lg border border-white/20' : 'bg-transparent'
         }`}>
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 bg-brandOrange rounded-xl flex items-center justify-center shadow-lg shadow-brandOrange/20 group-hover:rotate-6 transition-transform">
-              <img 
-                src="public/Logo.svg" 
-                alt="Logo" 
-                className="w-6 h-6 invert" 
-              />
-            </div>
             <span className="text-2xl font-display font-black tracking-tight text-navy">Meditin</span>
           </Link>
 
