@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+// Updated to react-router-dom v6 syntax
 import { useNavigate } from 'react-router-dom';
 import { SAMPLE_QUESTIONS } from '../constants';
 import { generateMedicalFeedback } from '../services/geminiService';

@@ -1,14 +1,44 @@
 
+import React from 'react';
+import { Zap, ShieldCheck, Star } from 'lucide-react';
 import { CareerField, PricingPlan, PracticeType, Question } from './types';
 
 export const SECTOR_MAPPING: Record<string, string[]> = {
-  'Health': ['Medical Doctor', 'Nurse', 'Radiographer', 'Lab Scientist', 'Pharmacist', 'Other / Specify'],
   'Finance': ['Accountant', 'Financial Analyst', 'Investment Banker', 'Auditor', 'Other / Specify'],
-  'Sales': ['Sales Representative', 'Account Manager', 'Business Development', 'Sales Director', 'Other / Specify'],
-  'Education': ['Primary Teacher', 'Secondary Teacher', 'University Lecturer', 'Researcher', 'Other / Specify'],
+  'Health': ['Medical Doctor', 'Nurse', 'Radiographer', 'Lab Scientist', 'Pharmacist', 'Other / Specify'],
+  'Technology': ['Software Engineer', 'Data Scientist', 'Product Manager', 'DevOps Engineer', 'UI/UX Designer', 'Other / Specify'],
 };
 
 export const SECTORS = Object.keys(SECTOR_MAPPING);
+
+// Pricing Multipliers (Successive 25% increase)
+export const SECTOR_PRICING_MULTIPLIERS: Record<string, number> = {
+  'Finance': 0.85, // 1.25 * 1.25
+  'Health': 0.85, // 1.25^3
+  'Tech': 2.44140625, // 1.25^4
+};
+
+export const BASE_PRICES = {
+  BASIC: 4800,
+  INTERMEDIATE: 7600,
+  ADVANCED: 14200,
+  FREE_EXAM: 0,
+  PAID_EXAM: 3000
+};
+
+export const GET_PLAN_PRICE = (planType: string, sector: string) => {
+  if (planType === 'FREE_EXAM') return 0;
+  if (planType === 'PAID_EXAM') return 3000;
+  
+  const base = BASE_PRICES[planType as keyof typeof BASE_PRICES] || 0;
+  const multiplier = SECTOR_PRICING_MULTIPLIERS[sector] || 1.0;
+  return Math.round(base * multiplier);
+};
+
+export const GET_OLD_PRICE = (price: number) => {
+  if (price === 0) return 0;
+  return Math.round(price * 1.5); // Marketing strategy: show 40% higher price cancelled out
+};
 
 export const MEDICAL_FIELDS: CareerField[] = [
   { id: 'med', name: 'General Medicine', description: 'General clinical practice, diagnosis and treatment.' },
@@ -27,64 +57,53 @@ export const CAREER_FIELDS: CareerField[] = [
 ];
 
 export const PRICING_PLANS: PricingPlan[] = [
-  // --- INTERVIEW PLANS (ONE-OFF ONLY) ---
   {
-    id: 'int_basic_once',
+    id: 'BASIC',
     name: 'Basic Plan',
-    price: 2500,
+    price: 4800,
     type: PracticeType.INTERVIEW,
-    features: ['1 Meditin Representative', '7-Minute Rapid Mock', 'User-Requested Questions (Max 5)', 'Instant Feedback'],
-    billingCycle: 'once'
+    features: ['Junior Professionals', '10-Minute Mock', 'Instant Feedback'],
+    billingCycle: 'once',
+    icon: <Zap size={24} />
   },
   {
-    id: 'int_silver_once',
-    name: 'Silver Panel',
-    price: 5000,
+    id: 'INTERMEDIATE',
+    name: 'Intermediate Plan',
+    price: 7600,
     type: PracticeType.INTERVIEW,
-    features: ['1 Professional + 1 General HR', '15-Minute Session', 'Deep Expert Feedback', 'Session Recording'],
-    billingCycle: 'once'
+    features: ['Senior Professionals', '20-Minute Session', 'Detailed Performance Report', 'Session Recording'],
+    billingCycle: 'once',
+    icon: <ShieldCheck size={24} />
   },
   {
-    id: 'int_gold_once',
-    name: 'Gold Panel',
-    price: 10000,
+    id: 'ADVANCED',
+    name: 'Advanced Plan',
+    price: 14200,
     type: PracticeType.INTERVIEW,
-    features: ['2 Professionals + 1 General HR', '20-Minute Master Session', 'Advanced Analytical Review', 'Professional Reference'],
-    billingCycle: 'once'
+    features: ['Senior Experts + Hiring Manager', '30-Minute Intensive', 'Deep Analytical Review', 'Session Recording', 'Reference Letter'],
+    billingCycle: 'once',
+    icon: <Star size={24} />
   },
-  {
-    id: 'int_diamond_once',
-    name: 'Diamond Panel',
-    price: 15000,
-    type: PracticeType.INTERVIEW,
-    features: ['3 Professionals + 1 Specific HR', 'Custom Duration (Extended)', 'Area of Concentration Prep', 'Elite Career Roadmap'],
-    billingCycle: 'once'
-  },
+];
 
-  // --- EXAM/TEST PLANS ---
+export const EXAM_PRICING_PLANS: PricingPlan[] = [
   {
-    id: 'exam_free',
-    name: 'Exam/Test Free Tier',
+    id: 'FREE_EXAM',
+    name: 'Free Practice',
     price: 0,
     type: PracticeType.EXAM,
-    features: ['3 Time Trials in 6 months', 'Standard Feedback', 'Basic Result Analytics'],
-    billingCycle: 'free'
+    features: ['5 Sample Questions', 'Instant Score', 'Basic Explanation'],
+    billingCycle: 'free',
+    icon: <Zap size={24} />
   },
   {
-    id: 'exam_one_off',
-    name: 'Exam/Test One-Off',
+    id: 'PAID_EXAM',
+    name: 'Premium Exam',
     price: 3000,
     type: PracticeType.EXAM,
-    features: ['1 Practice Session', 'Max 3 Courses/Subjects', 'Detailed Answer Explanations', 'Performance Scoring'],
-    billingCycle: 'once'
-  },
-  {
-    id: 'exam_monthly',
-    name: 'Exam/Test Monthly Master',
-    price: 10700,
-    type: PracticeType.EXAM,
-    features: ['4 Sessions per week', 'Max 3 Courses per session', 'Unlimited Explanation Access', 'Progress Tracking'],
-    billingCycle: 'monthly'
+    features: ['30-Min Curated Questions', 'Expert Feedback', 'Detailed Analysis', 'Performance Roadmap'],
+    billingCycle: 'once',
+    icon: <Star size={24} />
   },
 ];
 

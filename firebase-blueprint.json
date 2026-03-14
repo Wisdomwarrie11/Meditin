@@ -1,0 +1,89 @@
+{
+    "entities": {
+      "UserProfile": {
+        "title": "User Profile",
+        "description": "Stores user professional information and preferences.",
+        "type": "object",
+        "properties": {
+          "uid": { "type": "string" },
+          "displayName": { "type": "string" },
+          "email": { "type": "string" },
+          "professionalSector": { "type": "string" },
+          "professionalField": { "type": "string" },
+          "institution": { "type": "string" },
+          "experienceYears": { "type": "string" },
+          "qualification": { "type": "string" },
+          "skills": { "type": "array", "items": { "type": "string" } },
+          "role": { "type": "string", "enum": ["STUDENT", "ADMIN"] }
+        },
+        "required": ["uid", "email"]
+      },
+      "PracticeSession": {
+        "title": "Practice Session",
+        "description": "Details of a booked mock interview or exam session.",
+        "type": "object",
+        "properties": {
+          "userId": { "type": "string" },
+          "fullName": { "type": "string" },
+          "email": { "type": "string" },
+          "sector": { "type": "string" },
+          "field": { "type": "string" },
+          "natureOfPractice": { "type": "string" },
+          "difficultyLevel": { "type": "string", "enum": ["Starter", "Advanced", "Expert"] },
+          "planId": { "type": "string" },
+          "planName": { "type": "string" },
+          "price": { "type": "number" },
+          "date": { "type": "string" },
+          "time": { "type": "string" },
+          "paid": { "type": "boolean" },
+          "status": { "type": "string" },
+          "skills": { "type": "array", "items": { "type": "string" } },
+          "qualification": { "type": "string" }
+        },
+        "required": ["userId", "fullName", "email", "sector", "field", "natureOfPractice", "date", "time"]
+      },
+      "WaitingListEntry": {
+        "title": "Waiting List Entry",
+        "description": "Entry for users whose sector/field is not yet listed.",
+        "type": "object",
+        "properties": {
+          "userId": { "type": "string" },
+          "email": { "type": "string" },
+          "sector": { "type": "string" },
+          "field": { "type": "string" },
+          "createdAt": { "type": "number" }
+        },
+        "required": ["userId", "email", "sector", "field"]
+      },
+      "SectorVote": {
+        "title": "Sector Vote",
+        "description": "User votes for new interview categories.",
+        "type": "object",
+        "properties": {
+          "userId": { "type": "string" },
+          "sectorName": { "type": "string" },
+          "createdAt": { "type": "number" }
+        },
+        "required": ["userId", "sectorName"]
+      }
+    },
+    "firestore": {
+      "/users/{userId}": {
+        "schema": "UserProfile",
+        "description": "User profile documents."
+      },
+      "/practiceSessions/{sessionId}": {
+        "schema": "PracticeSession",
+        "description": "Mock session bookings."
+      },
+      "/waitingList/{entryId}": {
+        "schema": "WaitingListEntry",
+        "description": "Waiting list for unlisted sectors."
+      },
+      "/sectorVotes/{voteId}": {
+        "schema": "SectorVote",
+        "description": "Votes for new categories."
+      }
+    }
+  }
+  

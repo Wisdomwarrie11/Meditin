@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+// Updated to react-router-dom v6 syntax
+import { HashRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import About from './pages/About';
@@ -12,10 +13,10 @@ import Gallery from './pages/Gallery';
 import Dashboard from './pages/Dashboard';
 import Auth from './pages/Auth';
 import Payment from './pages/Payment';
-import PracticeSelector from './pages/PracticeSelector';
 import ExamEngine from './pages/ExamEngine';
-import InstallPWA from './components/InstallPWA';
 import AdminBookings from './pages/AdminBookings';
+import VerifyEmail from './pages/VerifyEmail';
+import InstallPWA from './components/InstallPWA';
 
 const App: React.FC = () => {
   return (
@@ -27,61 +28,70 @@ const App: React.FC = () => {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/verify-email" element={<VerifyEmail />} />
             <Route path="/book" element={<Booking />} />
             <Route path="/payment/:sessionId" element={<Payment />} />
-            <Route path="/practice" element={<PracticeSelector />} />
+            <Route path="/practice" element={<Navigate to="/dashboard" />} />
             <Route path="/exam-engine" element={<ExamEngine />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/admin/bookings" element={<AdminBookings />} />
             <Route path="/success" element={<Success />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/brand-assets" element={<BrandAssets />} />
             <Route path="/gallery" element={<Gallery />} />
-            <Route path="/admin" element={<AdminBookings />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </main>
         
         <InstallPWA />
 
-        <footer className="bg-navy text-white py-20 px-6 border-t border-white/5">
+        <footer className="bg-navy-900 text-white py-24 px-6 border-t border-white/5">
           <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-16">
-            <div className="space-y-6">
+            <div className="space-y-8">
               <div className="flex items-center gap-3">
-                <img src="public/Logo.svg" alt="Meditin" className="w-10 h-10 rounded-xl" />
-                <span className="text-2xl font-black tracking-tighter">Meditin</span>
+                <div className="w-10 h-10 bg-brandOrange rounded-xl flex items-center justify-center shadow-lg shadow-brandOrange/20">
+                  <img src="public/Logo.svg" alt="Meditin" className="w-6 h-6 invert" />
+                </div>
+                <span className="text-2xl font-display font-black tracking-tight">Meditin</span>
               </div>
-              <p className="text-slate-400 text-sm leading-relaxed">
-                Empowering the next generation of professionals through realistic simulations and expert feedback. Designed for global career success.
+              <p className="text-slate-400 text-sm leading-relaxed font-medium">
+                The world's most realistic simulation platform for medical exams and high-stakes interviews. Built by experts, powered by intelligence.
               </p>
             </div>
             <div>
-              <h4 className="font-black text-brandOrange uppercase tracking-widest text-xs mb-6">Quick Links</h4>
-              <ul className="space-y-4 text-slate-400 text-sm font-bold">
-                <li><a href="/" className="hover:text-white transition-colors">Home</a></li>
-                <li><a href="#/about" className="hover:text-white transition-colors">About Us</a></li>
-                <li><a href="#/gallery" className="hover:text-white transition-colors">Gallery</a></li>
-                <li><a href="#/brand-assets" className="hover:text-brandOrange transition-colors">Brand Assets</a></li>
+              <h4 className="font-display font-bold text-white text-sm mb-8">Platform</h4>
+              <ul className="space-y-4 text-slate-400 text-sm font-medium">
+                <li><Link to="/" className="hover:text-brandOrange transition-colors">Home</Link></li>
+                <li><Link to="/about" className="hover:text-brandOrange transition-colors">About Us</Link></li>
+                <li><Link to="/gallery" className="hover:text-brandOrange transition-colors">Gallery</Link></li>
+                <li><Link to="/brand-assets" className="hover:text-brandOrange transition-colors">Brand Assets</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-black text-brandOrange uppercase tracking-widest text-xs mb-6">Support</h4>
-              <ul className="space-y-4 text-slate-400 text-sm font-bold">
-                <li><a href="#" className="hover:text-white transition-colors">FAQ</a></li>
-                <li><a href="#/contact" className="hover:text-white transition-colors">Contact Support</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
+              <h4 className="font-display font-bold text-white text-sm mb-8">Support</h4>
+              <ul className="space-y-4 text-slate-400 text-sm font-medium">
+                <li><a href="#" className="hover:text-brandOrange transition-colors">Documentation</a></li>
+                <li><Link to="/contact" className="hover:text-brandOrange transition-colors">Contact Support</Link></li>
+                <li><a href="#" className="hover:text-brandOrange transition-colors">Privacy Policy</a></li>
+                <li><a href="#" className="hover:text-brandOrange transition-colors">Terms of Service</a></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-black text-brandOrange uppercase tracking-widest text-xs mb-6">Contact</h4>
-              <p className="text-slate-400 text-sm font-bold">
+              <h4 className="font-display font-bold text-white text-sm mb-8">Contact</h4>
+              <p className="text-slate-400 text-sm font-medium leading-loose">
                 support@meditin.com<br />
-                +2349029729621<br />
+                +234 902 972 9621<br />
                 Delta, Nigeria
               </p>
             </div>
           </div>
-          <div className="max-w-7xl mx-auto mt-20 pt-8 border-t border-white/5 text-center text-slate-500 text-xs font-bold uppercase tracking-widest">
-            © 2025 Meditin Technologies. Built for Medical Excellence.
+          <div className="max-w-7xl mx-auto mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500 text-[10px] font-bold uppercase tracking-widest">
+            <span>© 2025 Meditin Technologies. All rights reserved.</span>
+            <div className="flex gap-8">
+              <a href="#" className="hover:text-white transition-colors">Twitter</a>
+              <a href="#" className="hover:text-white transition-colors">LinkedIn</a>
+              <a href="#" className="hover:text-white transition-colors">Instagram</a>
+            </div>
           </div>
         </footer>
       </div>

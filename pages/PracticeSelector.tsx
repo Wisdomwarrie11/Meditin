@@ -1,9 +1,11 @@
 
 import React, { useState } from 'react';
+// Updated to react-router-dom v6 syntax
 import { useNavigate } from 'react-router-dom';
 import { MEDICAL_FIELDS, PRICING_PLANS } from '../constants';
 import { PracticeType, PricingPlan } from '../types';
-import { initializePayment } from '../services/paymentService';
+// Fix: Corrected import to use initializeSecurePayment as it is the only export in paymentService
+import { initializeSecurePayment } from '../services/paymentService';
 import { 
   Check, 
   ChevronRight, 
@@ -14,6 +16,7 @@ import {
   Syringe, 
   CreditCard 
 } from 'lucide-react';
+import { auth } from '../services/firebase';
 
 const PracticeSelector: React.FC = () => {
   const navigate = useNavigate();
@@ -22,30 +25,36 @@ const PracticeSelector: React.FC = () => {
   const [selectedPlan, setSelectedPlan] = useState<PricingPlan | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const handlePayment = () => {
+  // Fix: Modified handlePayment to use initializeSecurePayment with required config and async handling
+  const handlePayment = async () => {
     if (!selectedPlan) return;
     
     setIsProcessing(true);
-    // Real keys should be in environment variables
-    const publicKey = 'pk_test_sample_key_12345'; 
     
-    initializePayment({
-      key: publicKey,
-      email: 'student@example.com',
-      amount: selectedPlan.price,
-      ref: `REF-${Date.now()}`,
+    // The Secure Payment flow requires a sessionId from a saved Firestore record.
+    // Ideally, a session should be created before initiating payment.
+    // For this fast-track selector, we use a placeholder sessionId for logical consistency.
+    await initializeSecurePayment({
+      email: auth.currentUser?.email || 'student@example.com',
+      sessionId: 'FAST-PRACTICE-' + Date.now(), 
+      planId: selectedPlan.id,
       onSuccess: (res) => {
         console.log('Payment success:', res);
         // Navigate to success or the exam engine
         if (selectedPlan.type === PracticeType.EXAM) {
           navigate('/exam-engine');
         } else {
-          navigate('/scheduling');
+          // Changed to /success as /scheduling is not a route in App.tsx
+          navigate('/success');
         }
       },
       onCancel: () => {
         setIsProcessing(false);
         alert('Payment cancelled');
+      },
+      onError: (msg) => {
+        setIsProcessing(false);
+        alert('Payment Error: ' + msg);
       }
     });
   };

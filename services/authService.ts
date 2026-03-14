@@ -5,6 +5,7 @@ import {
   signOut, 
   onAuthStateChanged, 
   updateProfile,
+  sendEmailVerification,
   User 
 } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
@@ -12,19 +13,45 @@ import { auth, db } from './firebase';
 
 export const registerUser = async (email: string, pass: string, name: string) => {
   const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-  if (userCredential.user) {
-    await updateProfile(userCredential.user, { displayName: name });
-    
-    // Save user profile to Firestore
-    await setDoc(doc(db, 'users', userCredential.user.uid), {
-      uid: userCredential.user.uid,
-      email,
-      displayName: name,
-      createdAt: Date.now(),
-      role: 'STUDENT'
-    });
+  const user = userCredential.user;
+
+  if (user) {
+    try {
+      // 1. Update Profile
+      await updateProfile(user, { displayName: name });
+      
+      // 2. Save user profile to Firestore
+      await setDoc(doc(db, 'users', user.uid), {
+        uid: user.uid,
+        email,
+        displayName: name,
+        createdAt: Date.now(),
+        role: 'STUDENT'
+      });
+
+      // 3. Send verification email
+      // We do this last because it's the most likely to fail due to domain restrictions
+      await sendEmailVerification(user);
+    } catch (error) {
+      console.error("Error during registration steps:", error);
+      throw error;
+    }
   }
-  return userCredential.user;
+  return user;
+};
+
+export const resendVerificationEmail = async () => {
+  if (auth.currentUser) {
+    await sendEmailVerification(auth.currentUser);
+  }
+};
+
+export const reloadUser = async () => {
+  if (auth.currentUser) {
+    await auth.currentUser.reload();
+    return auth.currentUser;
+  }
+  return null;
 };
 
 export const loginUser = async (email: string, pass: string) => {

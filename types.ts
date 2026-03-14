@@ -47,6 +47,7 @@ export interface PricingPlan {
   type: PracticeType;
   features: string[];
   billingCycle?: 'once' | 'monthly' | 'free';
+  icon?: any;
 }
 
 export interface PracticeSession {
@@ -58,11 +59,13 @@ export interface PracticeSession {
   sector: string;
   field: string;
   natureOfPractice: string;
-  applicationType?: 'Intern' | 'Professional';
+  difficultyLevel: 'Starter' | 'Advanced' | 'Expert';
   practiceCategory: string;
   date: string;
   time: string;
   planId?: string;
+  planName?: string;
+  price: number;
   genderPreference?: 'No Preference' | 'Male' | 'Female';
   questionType?: 'MCQ' | 'Theory';
   examStandard?: 'Local Standard' | 'International Standard';
@@ -70,9 +73,24 @@ export interface PracticeSession {
   experienceYears?: string;
   skills?: string[];
   qualification?: string;
-  // Added 'WAITING_LIST' to the status union type
   status: 'PENDING_PAYMENT' | 'SCHEDULED' | 'COMPLETED' | 'CANCELLED' | 'WAITING_LIST';
   paid: boolean;
+  createdAt: number;
+}
+
+export interface WaitingListEntry {
+  id?: string;
+  userId: string;
+  email: string;
+  sector: string;
+  field: string;
+  createdAt: number;
+}
+
+export interface SectorVote {
+  id?: string;
+  userId: string;
+  sectorName: string;
   createdAt: number;
 }
 

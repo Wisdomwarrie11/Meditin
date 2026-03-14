@@ -13,7 +13,7 @@ import {
   serverTimestamp 
 } from 'firebase/firestore';
 import { db } from './firebase';
-import { PracticeSession, UserProfile, PerformanceScore } from '../types';
+import { PracticeSession, UserProfile, PerformanceScore, WaitingListEntry, SectorVote } from '../types';
 
 export const saveBooking = async (sessionData: PracticeSession): Promise<string> => {
   try {
@@ -27,6 +27,39 @@ export const saveBooking = async (sessionData: PracticeSession): Promise<string>
     throw error;
   }
 };
+
+export async function joinWaitingList(entry: WaitingListEntry) {
+  try {
+    await addDoc(collection(db, "waitingList"), {
+      ...entry,
+      createdAt: Date.now()
+    });
+  } catch (error) {
+    console.error("Error joining waiting list:", error);
+    throw error;
+  }
+}
+
+export async function voteForSector(vote: SectorVote) {
+  try {
+    // Check if user already voted for this sector
+    const q = query(
+      collection(db, "sectorVotes"),
+      where("userId", "==", vote.userId),
+      where("sectorName", "==", vote.sectorName)
+    );
+    const snap = await getDocs(q);
+    if (snap.empty) {
+      await addDoc(collection(db, "sectorVotes"), {
+        ...vote,
+        createdAt: Date.now()
+      });
+    }
+  } catch (error) {
+    console.error("Error voting for sector:", error);
+    throw error;
+  }
+}
 
 export const updateBookingStatus = async (sessionId: string, updates: Partial<PracticeSession>) => {
   try {

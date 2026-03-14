@@ -19,7 +19,9 @@ import {
   Settings,
   X,
   Save,
-  GraduationCap
+  GraduationCap,
+  Shield,
+  Zap
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { auth, db } from '../services/firebase';
@@ -43,11 +45,23 @@ const Dashboard: React.FC = () => {
 
   const [editFormData, setEditFormData] = useState<Partial<UserProfile>>({});
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
+  const [resumeBooking, setResumeBooking] = useState<any>(null);
 
   useEffect(() => {
+    const saved = localStorage.getItem('meditin_booking_progress');
+    if (saved) {
+      try {
+        setResumeBooking(JSON.parse(saved));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
     const unsubscribe = auth.onAuthStateChanged(async (u) => {
       if (!u) {
         navigate('/auth');
+      } else if (!u.emailVerified) {
+        navigate('/verify-email');
       } else {
         setUser(u);
         try {
@@ -134,7 +148,7 @@ const Dashboard: React.FC = () => {
   if (loading) return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white gap-6">
       <div className="w-20 h-20 border-4 border-slate-100 border-t-brandOrange rounded-full animate-spin" />
-      <p className="font-black text-navy uppercase tracking-[0.3em] text-[10px] animate-pulse">Synchronizing Career Data...</p>
+      <p className="font-black text-navy uppercase tracking-[0.3em] text-[10px] animate-pulse">Loading...</p>
     </div>
   );
 
@@ -152,6 +166,35 @@ const Dashboard: React.FC = () => {
           </div>
         )}
 
+        {resumeBooking && (
+          <div className="bg-brandOrange p-4 sm:p-5 rounded-2xl flex items-center justify-between text-white shadow-2xl animate-in slide-in-from-top duration-700">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-white text-brandOrange rounded-xl flex items-center justify-center shadow-lg"><Zap size={20} className="animate-pulse" /></div>
+              <div>
+                <p className="text-xs sm:text-sm font-black tracking-tight">You have an incomplete booking!</p>
+                <p className="text-[10px] opacity-80 font-bold">Step {resumeBooking.step}: {resumeBooking.formData.natureOfPractice || 'Session Details'}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={() => navigate('/book')}
+                className="px-6 py-2 bg-navy text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg"
+              >
+                Resume
+              </button>
+              <button 
+                onClick={() => {
+                  localStorage.removeItem('meditin_booking_progress');
+                  setResumeBooking(null);
+                }} 
+                className="text-white/40 hover:text-white p-1"
+              >
+                <Plus className="rotate-45" size={20} />
+              </button>
+            </div>
+          </div>
+        )}
+
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 sm:gap-10 bg-white p-6 sm:p-10 lg:p-14 rounded-3xl sm:rounded-[3.5rem] border border-slate-100 shadow-sm relative overflow-hidden group">
           <div className="absolute -right-20 -top-20 opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-1000 hidden sm:block"><Activity size={400} /></div>
           <div className="flex items-center gap-4 sm:gap-8 z-10">
@@ -162,17 +205,25 @@ const Dashboard: React.FC = () => {
             <div>
               <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-navy leading-none tracking-tighter">Hello, {profile?.displayName?.split(' ')[0] || user.displayName?.split(' ')[0] || 'Pro'}</h1>
               <div className="flex wrap items-center gap-2 sm:gap-3 mt-2 sm:mt-4">
-                <span className="px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-[8px] sm:text-[10px] font-black uppercase tracking-widest border border-slate-200">Tier: Aspiring Elite</span>
+                <span className="px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-[8px] sm:text-[10px] font-black uppercase tracking-widest border border-slate-200"></span>
                 <span className="text-[8px] sm:text-[10px] font-black text-slate-300 uppercase tracking-widest truncate max-w-[150px]">{user.email}</span>
               </div>
             </div>
           </div>
           <div className="flex gap-3 sm:gap-4 z-10 shrink-0 mt-2 sm:mt-0">
+            {profile?.role === 'ADMIN' && (
+              <button 
+                onClick={() => navigate('/admin/bookings')}
+                className="flex-1 sm:flex-none px-8 sm:px-10 py-5 sm:py-7 bg-white text-navy border-2 border-navy rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs sm:text-sm hover:bg-navy hover:text-white transition-all flex items-center justify-center gap-3"
+              >
+                <Shield size={18} /> Admin Panel
+              </button>
+            )}
             <button 
               onClick={() => navigate('/book')}
               className="flex-1 sm:flex-none px-8 sm:px-14 py-5 sm:py-7 bg-navy text-white rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs sm:text-sm shadow-2xl shadow-navy/40 hover:bg-brandOrange hover:scale-105 transition-all flex items-center justify-center gap-3 border-4 border-white/10"
             >
-              <Plus size={18} strokeWidth={4} /> New Mock Session
+              <Plus size={18} strokeWidth={4} /> Book New Session
             </button>
             <button 
               onClick={() => { logoutUser(); navigate('/auth'); }}
@@ -423,7 +474,7 @@ const Dashboard: React.FC = () => {
                   disabled={isUpdatingProfile}
                   className="w-full py-5 bg-navy text-white rounded-full font-black uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-brandOrange transition-all shadow-xl"
                  >
-                   {isUpdatingProfile ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />} Sync Profile
+                   {isUpdatingProfile ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />} Edit Profile
                  </button>
               </form>
            </div>

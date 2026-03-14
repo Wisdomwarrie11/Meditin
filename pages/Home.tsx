@@ -1,6 +1,7 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { 
   ArrowRight, 
   Star, 
@@ -15,6 +16,7 @@ import {
   Sparkles,
   Code,
   Briefcase,
+  CheckCircle2,
   Gavel
 } from 'lucide-react';
 
@@ -61,42 +63,63 @@ const Home: React.FC = () => {
     }
   ];
 
-  const expertTips = [
-    { 
-      title: 'The Power Pause', 
-      desc: 'During interviews, wait 2 seconds before answering. It shows you are thinking deeply and composed.', 
-      icon: <Clock />, 
-      cat: 'Interviews' 
+  // const expertTips = [
+  //   { 
+  //     title: 'The Power Pause', 
+  //     desc: 'During interviews, wait 2 seconds before answering. It shows you are thinking deeply and composed.', 
+  //     icon: <Clock />, 
+  //     cat: 'Interviews' 
+  //   },
+  //   { 
+  //     title: 'Patient Safety First', 
+  //     desc: 'In clinical exams, always state patient safety measures before diagnosis. It is the number one grading point.', 
+  //     icon: <ShieldCheck />, 
+  //     cat: 'Medical' 
+  //   },
+  //   { 
+  //     title: 'The "Why" Logic', 
+  //     desc: 'When explaining code or architecture, focus on the "Why" rather than the "How". Logic beats syntax.', 
+  //     icon: <Code />, 
+  //     cat: 'Technology' 
+  //   },
+  //   { 
+  //     title: 'IRAC Precision', 
+  //     desc: 'In law tests, follow Issue, Rule, Application, Conclusion. Precision is more valued than length.', 
+  //     icon: <Gavel />, 
+  //     cat: 'Legal' 
+  //   },
+  //   { 
+  //     title: 'Value Framing', 
+  //     desc: 'For business roles, link every answer to ROI or company goals. Show them the money.', 
+  //     icon: <Briefcase />, 
+  //     cat: 'Finance' 
+  //   },
+  //   { 
+  //     title: 'Camera Connection', 
+  //     desc: 'In virtual mocks, look directly at the lens, not the screen image. It mimics real eye contact.', 
+  //     icon: <Users />, 
+  //     cat: 'Soft Skills' 
+  //   }
+  // ];
+
+   const steps = [
+    {
+      title: 'Choose Your Path',
+      desc: 'Select from clinical exams, residency interviews, or scholarship tests tailored to your goals.',
+      icon: <Brain className="w-8 h-8" />,
+      color: 'bg-blue-500'
     },
-    { 
-      title: 'Patient Safety First', 
-      desc: 'In clinical exams, always state patient safety measures before diagnosis. It is the number one grading point.', 
-      icon: <ShieldCheck />, 
-      cat: 'Medical' 
+    {
+      title: 'Simulate & Practice',
+      desc: 'Engage in high-fidelity simulations with AI-driven feedback or live expert sessions.',
+      icon: <Sparkles className="w-8 h-8" />,
+      color: 'bg-brandOrange'
     },
-    { 
-      title: 'The "Why" Logic', 
-      desc: 'When explaining code or architecture, focus on the "Why" rather than the "How". Logic beats syntax.', 
-      icon: <Code />, 
-      cat: 'Technology' 
-    },
-    { 
-      title: 'IRAC Precision', 
-      desc: 'In law tests, follow Issue, Rule, Application, Conclusion. Precision is more valued than length.', 
-      icon: <Gavel />, 
-      cat: 'Legal' 
-    },
-    { 
-      title: 'Value Framing', 
-      desc: 'For business roles, link every answer to ROI or company goals. Show them the money.', 
-      icon: <Briefcase />, 
-      cat: 'Finance' 
-    },
-    { 
-      title: 'Camera Connection', 
-      desc: 'In virtual mocks, look directly at the lens, not the screen image. It mimics real eye contact.', 
-      icon: <Users />, 
-      cat: 'Soft Skills' 
+    {
+      title: 'Master & Succeed',
+      desc: 'Analyze your performance with deep metrics and walk into your exam with total confidence.',
+      icon: <CheckCircle2 className="w-8 h-8" />,
+      color: 'bg-emerald-500'
     }
   ];
   return (
@@ -217,7 +240,44 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      
+      {/* How It Works */}
+      <section className="py-32 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center max-w-3xl mx-auto mb-24">
+            <h2 className="text-brandOrange font-bold uppercase tracking-[0.3em] text-xs mb-4">The Process</h2>
+            <p className="text-5xl font-display font-black text-navy tracking-tight leading-none mb-6">How Meditin Works.</p>
+            <p className="text-lg text-slate-500 font-medium">We've distilled years of expert knowledge into a simple, powerful 3-step framework for your success.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
+            {/* Connector Line */}
+            <div className="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-slate-100 -translate-y-1/2 -z-10" />
+            
+            {steps.map((step, i) => (
+              <motion.div 
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.2 }}
+                className="relative group"
+              >
+                <div className="bg-white p-10 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 group-hover:border-brandOrange transition-all group-hover:-translate-y-2">
+                  <div className={`w-20 h-20 ${step.color} text-white rounded-3xl flex items-center justify-center mb-10 shadow-lg shadow-current/20`}>
+                    {step.icon}
+                  </div>
+                  <h3 className="text-2xl font-display font-black text-navy mb-4">{step.title}</h3>
+                  <p className="text-slate-500 font-medium leading-relaxed">{step.desc}</p>
+                </div>
+                <div className="absolute -top-4 -right-4 w-12 h-12 bg-white border-4 border-slate-50 rounded-full flex items-center justify-center font-black text-navy shadow-lg">
+                  0{i + 1}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
 
       {/* Featured Testimonials */}
       <section className="py-32 px-6 bg-navy relative overflow-hidden">
@@ -301,44 +361,6 @@ const Home: React.FC = () => {
       </section>
 
          {/* Expert Tips Section (Auto-Scrolling Carousel) */}
-     <section className="py-32 px-6 bg-white border-y border-slate-100">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 px-4">
-            <div>
-              <h2 className="text-brandOrange font-black uppercase tracking-[0.4em] text-[10px] mb-4">Professional Intelligence</h2>
-              <p className="text-5xl font-black text-navy tracking-tighter leading-none">The Win Guide.</p>
-            </div>
-            <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.2em] mb-2 hidden md:block italic">Expert insights across industries</p>
-          </div>
-          
-          <div 
-            ref={scrollRef}
-            className="flex gap-8 overflow-x-auto pb-12 snap-x hide-scrollbar"
-            style={{ scrollBehavior: 'smooth' }}
-          >
-            {expertTips.map((tip, i) => (
-              <div key={i} className="min-w-[320px] md:min-w-[420px] snap-center">
-                <div className="bg-slate-50 p-12 rounded-[3.5rem] border border-slate-100 hover:border-brandOrange transition-all hover:shadow-2xl hover:shadow-brandOrange/10 group h-full flex flex-col justify-between">
-                  <div className="space-y-10">
-                    <div className="flex items-center justify-between">
-                      <div className="w-16 h-16 bg-navy text-white rounded-[1.5rem] flex items-center justify-center group-hover:bg-brandOrange transition-colors shadow-xl">
-                        {React.cloneElement(tip.icon as React.ReactElement<any>, { size: 32 })}
-                      </div>
-                      <span className="px-4 py-1.5 bg-white text-[10px] font-black uppercase tracking-widest text-slate-400 rounded-full border border-slate-200 group-hover:bg-brandOrange/10 group-hover:text-brandOrange transition-colors">
-                        {tip.cat}
-                      </span>
-                    </div>
-                    <h3 className="text-3xl font-black text-navy leading-tight">{tip.title}</h3>
-                  </div>
-                  <p className="text-slate-500 text-lg font-medium leading-relaxed mt-10">
-                    {tip.desc}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
 
       {/* Unique Final CTA */}

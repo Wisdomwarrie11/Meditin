@@ -1,7 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getAllBookings } from '../services/firestoreService';
-import { PracticeSession } from '../types';
+import { PracticeSession, UserProfile } from '../types';
+import { auth, db } from '../services/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 import { 
   Download, 
   Search, 
@@ -20,21 +23,44 @@ import {
 } from 'lucide-react';
 
 const AdminBookings: React.FC = () => {
+  const navigate = useNavigate();
   const [bookings, setBookings] = useState<PracticeSession[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const data = await getAllBookings();
-      setBookings(data);
-      setLoading(false);
+    const checkAdmin = async () => {
+      const unsubscribe = auth.onAuthStateChanged(async (user) => {
+        if (!user) {
+          navigate('/auth');
+          return;
+        }
+        
+        if (!user.emailVerified) {
+          navigate('/verify-email');
+          return;
+        }
+        
+        try {
+          // Removed role check as per user request
+          setIsAdmin(true); 
+          const data = await getAllBookings();
+          setBookings(data);
+        } catch (error) {
+          console.error(error);
+          // If they really don't have permission in Firestore, they'll see an empty list or error
+        } finally {
+          setLoading(false);
+        }
+      });
+      return () => unsubscribe();
     };
-    fetchData();
-  }, []);
+    checkAdmin();
+  }, [navigate]);
 
   const downloadCSV = () => {
-    const headers = ['FullName', 'Email', 'Institution', 'Sector', 'Field', 'Nature', 'QType', 'Standard', 'Date', 'Time', 'Paid'];
+    const headers = ['FullName', 'Email', 'Institution', 'Sector', 'Field', 'Nature', 'Difficulty', 'Plan', 'Price', 'QType', 'Standard', 'Date', 'Time', 'Paid', 'Skills', 'Qualification'];
     const rows = filteredBookings.map(b => [
       b.fullName,
       b.email,
@@ -42,11 +68,16 @@ const AdminBookings: React.FC = () => {
       b.sector,
       b.field,
       b.natureOfPractice,
+      b.difficultyLevel || 'N/A',
+      b.planName || 'N/A',
+      b.price || 0,
       b.questionType || 'N/A',
       b.examStandard || 'N/A',
       b.date,
       b.time,
-      b.paid ? 'YES' : 'NO'
+      b.paid ? 'YES' : 'NO',
+      (b.skills || []).join('; '),
+      b.qualification || 'N/A'
     ]);
 
     const csvContent = "data:text/csv;charset=utf-8," 
@@ -136,7 +167,8 @@ const AdminBookings: React.FC = () => {
                 <tr className="bg-navy text-white">
                   <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest">Customer</th>
                   <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest">Industry & Field</th>
-                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest">Nature</th>
+                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest">Nature & Level</th>
+                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest">Plan & Price</th>
                   <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest">Exam Specs</th>
                   <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest">Schedule</th>
                   <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest">Status</th>
@@ -152,6 +184,7 @@ const AdminBookings: React.FC = () => {
                         <p className="text-xs font-medium text-slate-400 flex items-center gap-1">
                           <Mail size={12} /> {booking.email}
                         </p>
+                        <p className="text-[10px] font-bold text-slate-500">Qual: {booking.qualification}</p>
                       </div>
                     </td>
                     <td className="px-6 py-6">
@@ -165,9 +198,20 @@ const AdminBookings: React.FC = () => {
                       </div>
                     </td>
                     <td className="px-6 py-6">
-                      <span className="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-widest">
-                        {booking.natureOfPractice}
-                      </span>
+                      <div className="space-y-1">
+                        <span className="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-widest">
+                          {booking.natureOfPractice}
+                        </span>
+                        <p className="text-[10px] font-bold text-brandOrange uppercase tracking-widest">
+                          {booking.difficultyLevel}
+                        </p>
+                      </div>
+                    </td>
+                    <td className="px-6 py-6">
+                      <div className="space-y-1">
+                        <p className="text-xs font-black text-navy">{booking.planName}</p>
+                        <p className="text-sm font-black text-emerald-600">₦{booking.price?.toLocaleString()}</p>
+                      </div>
                     </td>
                     <td className="px-6 py-6">
                       <div className="space-y-1">
@@ -219,6 +263,9 @@ const AdminBookings: React.FC = () => {
                                 <span className="text-[8px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded font-black uppercase border border-blue-100">FREE TIER</span>
                             )}
                             <span className="text-[8px] bg-navy/5 text-navy px-2 py-0.5 rounded font-black uppercase">XP: {booking.experienceYears}yr</span>
+                            {booking.skills?.map(s => (
+                              <span key={s} className="text-[8px] bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded font-black uppercase border border-emerald-100">{s}</span>
+                            ))}
                         </div>
                     </td>
                   </tr>

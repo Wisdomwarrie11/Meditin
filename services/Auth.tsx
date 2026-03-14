@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 // Updated to react-router-dom v6 syntax
 import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, ArrowRight, Loader2, Sparkles, ChevronLeft, AlertCircle, Check } from 'lucide-react';
-import { registerUser, loginUser, logoutUser } from '../services/authService';
+import { registerUser, loginUser } from '../services/authService';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
 
@@ -19,42 +19,28 @@ const Auth: React.FC = () => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-    
+  
     try {
-      let user;
-      if (isLogin) {
-        user = await loginUser(formData.email, formData.password);
-      } else {
-        try {
-          user = await registerUser(formData.email, formData.password, formData.name);
-        } catch (regErr) {
-          // If registration fails midway (e.g. Firestore or Email fails), 
-          // we must sign out because createUserWithEmailAndPassword already logged them in.
-          await logoutUser();
-          throw regErr;
-        }
+      const user = await loginUser(formData.email, formData.password);
+  
+      if (!user.emailVerified) {
+        setError("Please verify your email before logging in.");
+        setIsLoading(false);
+        return;
       }
-      
-      if (user) {
-        if (!isLogin) {
-          setShowVerificationModal(true);
-          setIsLoading(false);
-        } else {
-          navigate('/dashboard');
-        }
-      }
+  
+      navigate('/dashboard');
     } catch (err: any) {
       console.error(err);
-      let message = 'An error occurred during authentication.';
+      let message = 'Something went wrong.';
       if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
         message = 'Invalid email or password.';
-      } else if (err.code === 'auth/email-already-in-use') {
-        message = 'This email is already registered.';
       }
       setError(message);
       setIsLoading(false);
     }
   };
+  
 
   return (
     <div className="min-h-screen flex bg-white selection:bg-brandOrange selection:text-white relative">
