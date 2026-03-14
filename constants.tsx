@@ -4,9 +4,9 @@ import { Zap, ShieldCheck, Star } from 'lucide-react';
 import { CareerField, PricingPlan, PracticeType, Question } from './types';
 
 export const SECTOR_MAPPING: Record<string, string[]> = {
-  'Finance': ['Accountant', 'Financial Analyst', 'Investment Banker', 'Auditor', 'Other / Specify'],
-  'Health': ['Medical Doctor', 'Nurse', 'Radiographer', 'Lab Scientist', 'Pharmacist', 'Other / Specify'],
-  'Technology': ['Software Engineer', 'Data Scientist', 'Product Manager', 'DevOps Engineer', 'UI/UX Designer', 'Other / Specify'],
+  'Finance': ['Accountant', 'Financial Analyst', 'Banker', 'Auditor'],
+  'Health': ['Medical Doctor', 'Nurse', 'Radiographer', 'Pharmacist'],
+  'Technology': ['Frontend', 'Backend Dev', 'Fullstack Dev', 'Data Scientist', 'Product Manager', 'UI/UX Designer'],
 };
 
 export const SECTORS = Object.keys(SECTOR_MAPPING);
