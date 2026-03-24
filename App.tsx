@@ -17,6 +17,7 @@ import ExamEngine from './pages/ExamEngine';
 import AdminBookings from './pages/AdminBookings';
 import VerifyEmail from './pages/VerifyEmail';
 import InstallPWA from './components/InstallPWA';
+import { Analytics } from '@vercel/analytics/next';
 
 const App: React.FC = () => {
   return (

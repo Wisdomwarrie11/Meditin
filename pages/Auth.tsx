@@ -45,7 +45,7 @@ const Auth: React.FC = () => {
       }
     } catch (err: any) {
       console.error(err);
-      let message = 'An error occurred during authentication.';
+      let message = 'There is an error somewhere. We are fixing it.';
       if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
         message = 'Invalid email or password.';
       } else if (err.code === 'auth/email-already-in-use') {
