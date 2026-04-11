@@ -13,7 +13,42 @@ import {
   serverTimestamp 
 } from 'firebase/firestore';
 import { db } from './firebase';
-import { PracticeSession, UserProfile, PerformanceScore, WaitingListEntry, SectorVote } from '../types';
+import { PracticeSession, UserProfile, PerformanceScore, WaitingListEntry, SectorVote, MentorshipEnrollment } from '../types';
+
+export const enrollInMentorship = async (enrollment: MentorshipEnrollment) => {
+  try {
+    const q = query(
+      collection(db, "mentorshipEnrollments"),
+      where("userId", "==", enrollment.userId),
+      where("programId", "==", enrollment.programId)
+    );
+    const snap = await getDocs(q);
+    if (snap.empty) {
+      await addDoc(collection(db, "mentorshipEnrollments"), {
+        ...enrollment,
+        createdAt: Date.now()
+      });
+    }
+  } catch (error) {
+    console.error("Error enrolling in mentorship:", error);
+    throw error;
+  }
+};
+
+export const getMyMentorships = async (userId: string): Promise<MentorshipEnrollment[]> => {
+  try {
+    const q = query(
+      collection(db, "mentorshipEnrollments"),
+      where("userId", "==", userId),
+      orderBy("createdAt", "desc")
+    );
+    const snap = await getDocs(q);
+    return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as MentorshipEnrollment));
+  } catch (error) {
+    console.error("Error fetching mentorships:", error);
+    return [];
+  }
+};
 
 export const saveBooking = async (sessionData: PracticeSession): Promise<string> => {
   try {

@@ -8,7 +8,30 @@ export enum UserRole {
 export enum PracticeType {
   EXAM = 'EXAM',
   INTERVIEW = 'INTERVIEW',
-  SUBSCRIPTION = 'SUBSCRIPTION'
+  SUBSCRIPTION = 'SUBSCRIPTION',
+  MENTORSHIP = 'MENTORSHIP'
+}
+
+export interface MentorshipProgram {
+  id: string;
+  title: string;
+  mentorName: string;
+  mentorRole: string;
+  sector: string;
+  description: string;
+  duration: string;
+  price: number;
+  status: 'COMING_SOON' | 'ACTIVE';
+  createdAt: number;
+}
+
+export interface MentorshipEnrollment {
+  id?: string;
+  userId: string;
+  programId: string;
+  programTitle: string;
+  status: 'INTERESTED' | 'ENROLLED';
+  createdAt: number;
 }
 
 export interface PerformanceScore {

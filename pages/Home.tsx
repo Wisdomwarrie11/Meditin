@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
@@ -17,13 +16,19 @@ import {
   Code,
   Briefcase,
   CheckCircle2,
-  Gavel
+  Gavel,
+  ChevronRight,
+  X
 } from 'lucide-react';
+import { auth } from '../services/firebase';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [isMentorModalOpen, setIsMentorModalOpen] = useState(false);
+
+
   useEffect(() => {
     setIsVisible(true);
 
@@ -40,7 +45,13 @@ const Home: React.FC = () => {
       }
     }, 5500);
 
+    return () => clearInterval(interval);
   }, []);
+
+  const handleStart = () => {
+    if (auth.currentUser) navigate('/dashboard');
+    else navigate('/auth');
+  };
 
   const testimonials = [
     { 
@@ -63,55 +74,43 @@ const Home: React.FC = () => {
     }
   ];
 
-  // const expertTips = [
-  //   { 
-  //     title: 'The Power Pause', 
-  //     desc: 'During interviews, wait 2 seconds before answering. It shows you are thinking deeply and composed.', 
-  //     icon: <Clock />, 
-  //     cat: 'Interviews' 
-  //   },
-  //   { 
-  //     title: 'Patient Safety First', 
-  //     desc: 'In clinical exams, always state patient safety measures before diagnosis. It is the number one grading point.', 
-  //     icon: <ShieldCheck />, 
-  //     cat: 'Medical' 
-  //   },
-  //   { 
-  //     title: 'The "Why" Logic', 
-  //     desc: 'When explaining code or architecture, focus on the "Why" rather than the "How". Logic beats syntax.', 
-  //     icon: <Code />, 
-  //     cat: 'Technology' 
-  //   },
-  //   { 
-  //     title: 'IRAC Precision', 
-  //     desc: 'In law tests, follow Issue, Rule, Application, Conclusion. Precision is more valued than length.', 
-  //     icon: <Gavel />, 
-  //     cat: 'Legal' 
-  //   },
-  //   { 
-  //     title: 'Value Framing', 
-  //     desc: 'For business roles, link every answer to ROI or company goals. Show them the money.', 
-  //     icon: <Briefcase />, 
-  //     cat: 'Finance' 
-  //   },
-  //   { 
-  //     title: 'Camera Connection', 
-  //     desc: 'In virtual mocks, look directly at the lens, not the screen image. It mimics real eye contact.', 
-  //     icon: <Users />, 
-  //     cat: 'Soft Skills' 
-  //   }
-  // ];
+  const mentorships = [
+    {
+      title: 'Medical Mentorship',
+      mentor: 'Dr. Adewale Johnson',
+      role: 'Senior Consultant',
+      sector: 'Healthcare',
+      duration: '8 Weeks',
+      image: 'medicine.jpeg'
+    },
+    {
+      title: 'Tech Leadership Mastery',
+      mentor: 'Sarah Williams',
+      role: 'CTO at HealthTech',
+      sector: 'Technology',
+      duration: '3 Weeks',
+      image: 'tech.jpeg'
+    },
+    {
+      title: 'Financial Mentorship Program',
+      mentor: 'Nurse Grace Obi',
+      role: 'Head of Finance Department',
+      sector: 'Finance',
+      duration: '2 Weeks',
+      image: 'finance.jpeg'
+    }
+  ];
 
    const steps = [
     {
       title: 'Choose Your Path',
-      desc: 'Select from clinical exams, residency interviews, or scholarship tests tailored to your goals.',
+      desc: 'Select from clinical exams, residency interviews, or mentorship programs tailored to your goals.',
       icon: <Brain className="w-8 h-8" />,
       color: 'bg-blue-500'
     },
     {
       title: 'Simulate & Practice',
-      desc: 'Engage in high-fidelity simulations with AI-driven feedback or live expert sessions.',
+      desc: 'Engage in high-fidelity simulations or join mentorship cohorts led by industry experts.',
       icon: <Sparkles className="w-8 h-8" />,
       color: 'bg-brandOrange'
     },
@@ -122,10 +121,11 @@ const Home: React.FC = () => {
       color: 'bg-emerald-500'
     }
   ];
+
   return (
     <div className="bg-[#FCFCFD] selection:bg-brandOrange selection:text-white overflow-x-hidden">
       {/* Dynamic Hero Section */}
-      <section className="relative min-h-[100vh] flex items-center pt-24 pb-12">
+      <section className="relative min-h-[100vh] flex items-center mt-8 pt-24 pb-12">
         {/* Background Accents */}
         <div className="absolute top-0 right-0 w-[60%] h-full bg-navy/5 -skew-x-12 translate-x-32 -z-10 hidden lg:block" />
         <div className="absolute bottom-20 left-10 w-64 h-64 bg-brandOrange/10 rounded-full blur-[120px] -z-10" />
@@ -134,7 +134,7 @@ const Home: React.FC = () => {
           {/* Text Side */}
           <div className={`lg:col-span-7 space-y-10 transition-all duration-1000 transform ${isVisible ? 'translate-x-0 opacity-100' : '-translate-x-10 opacity-0'}`}>
             
-            <h1 className="text-6xl md:text-8xl font-black text-navy leading-[0.85] tracking-tighter">
+            <h1 className="text-6xl md:text-8xl font-black text-navy leading-[0.85] tracking-tighter text-balance">
               Win your <br />
               <span className="text-brandOrange underline decoration-navy/10 underline-offset-8">career</span> <br />
               today.
@@ -154,7 +154,6 @@ const Home: React.FC = () => {
                 </span>
                 <div className="absolute inset-0 bg-brandOrange translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
               </button>
-              
             </div>
           </div>
 
@@ -165,6 +164,9 @@ const Home: React.FC = () => {
                 src="brand1.jpeg" 
                 alt="Professional Black Woman Interviewing" 
                 className="w-full h-[650px] object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-700"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=800";
+                }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-navy/40 to-transparent" />
             </div>      
@@ -193,6 +195,9 @@ const Home: React.FC = () => {
                 src="interview.jpeg" 
                 alt="Confident Professional Writing Exam" 
                 className="w-full h-full object-cover grayscale-[100%] group-hover:grayscale-0 transition-all duration-700"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800";
+                }}
               />
               <div className="absolute inset-0 bg-navy/60 group-hover:bg-navy/20 transition-all" />
               <div className="absolute bottom-10 left-10 right-10">
@@ -229,6 +234,9 @@ const Home: React.FC = () => {
                 src="account.jpeg" 
                 alt="Confident Professional Writing Exam" 
                 className="w-full h-full object-cover grayscale-[100%] group-hover:grayscale-0 transition-all duration-700"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1584820923423-8f15b18d4d51?auto=format&fit=crop&q=80&w=800";
+                }}
               />
               <div className="absolute inset-0 bg-navy/60 group-hover:bg-navy/20 transition-all" />
               <div className="absolute bottom-10 left-10 right-10">
@@ -278,6 +286,56 @@ const Home: React.FC = () => {
         </div>
       </section>
 
+      {/* Mentorship Programs Section */}
+      <section className="py-32 px-6 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20">
+            <div className="max-w-2xl">
+              <h2 className="text-brandOrange font-black uppercase tracking-[0.3em] text-sm mb-6">Mentorship</h2>
+              <p className="text-5xl md:text-7xl font-black text-navy tracking-tighter leading-none">Join Elite Mentorship <br /> Programs.</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {mentorships.map((m, i) => (
+              <motion.div 
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="group bg-white rounded-[2.5rem] border border-slate-100 overflow-hidden hover:shadow-2xl hover:shadow-navy/5 transition-all"
+              >
+                <div className="relative h-64 overflow-hidden">
+                  <img src={m.image} alt={m.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <div className="absolute top-4 right-4 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-[10px] font-black uppercase tracking-widest text-navy">
+                    Coming Soon
+                  </div>
+                </div>
+                <div className="p-8">
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className="px-2 py-0.5 bg-navy/5 text-navy text-[8px] font-black uppercase tracking-widest rounded-md">{m.sector}</span>
+                    <span className="px-2 py-0.5 bg-brandOrange/5 text-brandOrange text-[8px] font-black uppercase tracking-widest rounded-md">{m.duration}</span>
+                  </div>
+                  <h3 className="text-xl font-black text-navy mb-2 group-hover:text-brandOrange transition-colors">{m.title}</h3>
+                  <div className="flex items-center gap-3 mt-6 pt-6 border-t border-slate-50">
+                    <div>
+                      <p className="text-sm font-black text-navy leading-none">{m.mentor}</p>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">{m.role}</p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={handleStart}
+                    className="w-full mt-8 py-4 bg-slate-50 text-slate-400 group-hover:bg-navy group-hover:text-white rounded-2xl font-black uppercase tracking-widest text-[15px] transition-all"
+                  >
+                    Join 
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Featured Testimonials */}
       <section className="py-32 px-6 bg-navy relative overflow-hidden">
@@ -348,6 +406,9 @@ const Home: React.FC = () => {
               src="woman.jpeg" 
               alt="Confident Black Professional" 
               className="w-full h-full object-cover grayscale-[100%] group-hover:grayscale-0 transition-all duration-1000"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1559839734-2b71f1536783?auto=format&fit=crop&q=80&w=1200";
+              }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-navy to-transparent opacity-60" />
             <div className="absolute bottom-12 left-12 right-12 text-white">
@@ -360,8 +421,91 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-         {/* Expert Tips Section (Auto-Scrolling Carousel) */}
+         {/* Become a Mentor Section */}
+         <section className="py-32 px-6 bg-slate-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="bg-white p-12 md:p-20 rounded-[4rem] shadow-2xl shadow-navy/5 border border-slate-100 flex flex-col md:flex-row items-center justify-between gap-12">
+            <div className="max-w-2xl">
+              <h2 className="text-brandOrange font-black uppercase tracking-[0.3em] text-sm mb-6">Pass it on</h2>
+              <p className="text-4xl md:text-6xl font-black text-navy tracking-tighter leading-none mb-8">Join our network <br /> of expert mentors.</p>
+              <p className="text-xl text-slate-500 font-medium leading-relaxed">
+                Help the next generation of professionals find their feet. Share your experience, guide their growth, and build your own legacy.
+              </p>
+            </div>
+            <button 
+              onClick={() => setIsMentorModalOpen(true)}
+              className="px-12 py-6 bg-navy text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-brandOrange transition-all shadow-xl shadow-navy/10 active:scale-[0.98] shrink-0"
+            >
+              Apply as a Mentor
+            </button>
+          </div>
+        </div>
+      </section>
 
+      {/* Mentor Application Modal */}
+      {isMentorModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-navy/90 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white w-full max-w-2xl rounded-[3rem] p-8 md:p-12 shadow-2xl relative animate-in zoom-in duration-300 max-h-[90vh] overflow-y-auto">
+            <button 
+              onClick={() => setIsMentorModalOpen(false)}
+              className="absolute top-8 right-8 p-2 text-slate-400 hover:text-navy transition-colors"
+            >
+              <X size={24} />
+            </button>
+
+            <div className="mb-10">
+              <h3 className="text-3xl font-black text-navy tracking-tighter">Apply to Mentor</h3>
+              <p className="text-slate-500 font-medium mt-2">Tell us a bit about yourself and we'll get in touch.</p>
+            </div>
+
+            <form 
+              onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.currentTarget);
+                const name = formData.get('name');
+                const role = formData.get('role');
+                const qualification = formData.get('qualification');
+                const phone = formData.get('phone');
+                const email = formData.get('email');
+                
+                const message = `Hello Meditin, I would like to apply as a mentor.\n\nName: ${name}\nRole: ${role}\nQualification: ${qualification}\nPhone: ${phone}\nEmail: ${email}`;
+                const whatsappUrl = `https://wa.me/2349029729621?text=${encodeURIComponent(message)}`;
+                window.open(whatsappUrl, '_blank');
+                setIsMentorModalOpen(false);
+              }}
+              className="space-y-6"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Full Name</label>
+                  <input required name="name" type="text" placeholder="John Doe" className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:border-brandOrange transition-all font-medium" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Current Role</label>
+                  <input required name="role" type="text" placeholder="Senior Consultant" className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:border-brandOrange transition-all font-medium" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Highest Qualification</label>
+                <input required name="qualification" type="text" placeholder="MBBS, FWACS, etc." className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:border-brandOrange transition-all font-medium" />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Phone Number</label>
+                  <input required name="phone" type="tel" placeholder="+234..." className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:border-brandOrange transition-all font-medium" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Email Address</label>
+                  <input required name="email" type="email" placeholder="john@example.com" className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:border-brandOrange transition-all font-medium" />
+                </div>
+              </div>
+              <button type="submit" className="w-full py-6 bg-navy text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-brandOrange transition-all shadow-xl shadow-navy/10 active:scale-[0.98]">
+                Send Application via WhatsApp
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Unique Final CTA */}
       <section className="py-32 px-6">
