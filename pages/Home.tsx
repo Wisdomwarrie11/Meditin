@@ -6,6 +6,7 @@ import {
   Star, 
   Users, 
   Smile, 
+  Zap,
   ArrowUpRight,
   Clock,
   ShieldCheck,
@@ -68,7 +69,7 @@ const Home: React.FC = () => {
     },
     { 
       name: 'Amara Okafor', 
-      role: 'Law Graduate', 
+      role: 'Finance Graduate', 
       text: 'The questions were just like the real test. I didn\'t have to guess what would come up next. Highly recommended!', 
       img: 'https://i.pravatar.cc/100?img=32' 
     }
@@ -93,7 +94,7 @@ const Home: React.FC = () => {
     },
     {
       title: 'Financial Mentorship Program',
-      mentor: 'Nurse Grace Obi',
+      mentor: 'Mr Grace Obi',
       role: 'Head of Finance Department',
       sector: 'Finance',
       duration: '2 Weeks',
@@ -178,7 +179,7 @@ const Home: React.FC = () => {
       </section>
 
       {/* The Bento Step Grid */}
-      <section className="py-32 px-6">
+      <section className="py-30 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20">
             <div className="max-w-2xl">
@@ -287,7 +288,7 @@ const Home: React.FC = () => {
       </section>
 
       {/* Mentorship Programs Section */}
-      <section className="py-32 px-6 bg-white">
+      <section className="py-30 px-6 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20">
             <div className="max-w-2xl">
@@ -422,7 +423,7 @@ const Home: React.FC = () => {
       </section>
 
          {/* Become a Mentor Section */}
-         <section className="py-32 px-6 bg-slate-50">
+         <section className="py-30 px-6 bg-slate-50">
         <div className="max-w-7xl mx-auto">
           <div className="bg-white p-12 md:p-20 rounded-[4rem] shadow-2xl shadow-navy/5 border border-slate-100 flex flex-col md:flex-row items-center justify-between gap-12">
             <div className="max-w-2xl">
@@ -508,7 +509,7 @@ const Home: React.FC = () => {
       )}
 
       {/* Unique Final CTA */}
-      <section className="py-32 px-6">
+      {/* <section className="py-32 px-6">
         <div className="max-w-7xl mx-auto relative h-[500px] rounded-[4rem] bg-navy flex items-center justify-center text-center overflow-hidden">
            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-brandOrange/20 via-transparent to-transparent opacity-50" />
            <div className="relative z-10 space-y-10 px-8">
@@ -522,7 +523,7 @@ const Home: React.FC = () => {
               </button>
            </div>
         </div>
-      </section>
+      </section> */}
 
       <style>{`
         @keyframes marquee {

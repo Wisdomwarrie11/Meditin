@@ -19,6 +19,7 @@ import VerifyEmail from './pages/VerifyEmail';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import InstallPWA from './components/InstallPWA';
+import Pricing from './pages/pricing';
 
 const App: React.FC = () => {
   return (
@@ -39,6 +40,7 @@ const App: React.FC = () => {
             <Route path="/admin/bookings" element={<AdminBookings />} />
             <Route path="/success" element={<Success />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/pricing" element={<Pricing />} />
             <Route path="/brand-assets" element={<BrandAssets />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
@@ -64,8 +66,7 @@ const App: React.FC = () => {
               <ul className="space-y-4 text-slate-400 text-sm font-medium">
                 <li><Link to="/" className="hover:text-brandOrange transition-colors">Home</Link></li>
                 <li><Link to="/about" className="hover:text-brandOrange transition-colors">About Us</Link></li>
-                <li><Link to="/gallery" className="hover:text-brandOrange transition-colors">Gallery</Link></li>
-                <li><Link to="/brand-assets" className="hover:text-brandOrange transition-colors">Brand Assets</Link></li>
+                <li><Link to="/pricing" className="hover:text-brandOrange transition-colors">Pricing</Link></li>
               </ul>
             </div>
             <div>
